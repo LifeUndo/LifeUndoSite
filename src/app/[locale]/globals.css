@@ -55,5 +55,13 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+/* Fallback sizes for icons when Tailwind utilities are not applied */
+img[alt="GetLifeUndo logo"] {
+  width: 32px;
+  height: 32px;
+}
 
-
+svg {
+  width: 20px;
+  height: 20px;
+}
