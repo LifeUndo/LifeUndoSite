@@ -1,0 +1,44 @@
+[
+  {
+    "id": "student-form-recovery",
+    "title": "Student: Bring back lost answer text",
+    "sector": "Education",
+    "summary": "Submitted a form in LMS and everything disappeared? LifeUndo stores entered text locally. Reopen the page — click ‘Restore’. Exams, tests, assignments — no panic.",
+    "cta": "Download"
+  },
+  {
+    "id": "journalist-page-recovery",
+    "title": "Journalist/Editor: Undo sudden reload",
+    "sector": "Media",
+    "summary": "Writing in a CMS and the tab froze — text is gone. With LifeUndo the form is restored from a local safe. No telemetry, only your browser.",
+    "cta": "Download"
+  },
+  {
+    "id": "office-tab-recovery",
+    "title": "Office/Accounting: Restore closed tab and clipboard",
+    "sector": "Office",
+    "summary": "Accidentally closed a page with a report? Closed tabs history and clipboard journal are at hand. Find what you need and restore with one click.",
+    "cta": "Download"
+  },
+  {
+    "id": "smm-clipboard-history",
+    "title": "SMM/Creator: Clipboard history for post safety",
+    "sector": "Marketing",
+    "summary": "Prepared a post, copied variants of texts/links — everything is saved locally. Bring the right version back and publish confidently.",
+    "cta": "Download"
+  },
+  {
+    "id": "executive-email-pause",
+    "title": "Executive: Nothing will go out accidentally",
+    "sector": "Management",
+    "summary": "Before an important publication or email — GLU has ‘Email Pause’: 30–120 seconds, stop words list, second glance. Reduces mistakes and reputation risks.",
+    "cta": "Learn about GLU"
+  },
+  {
+    "id": "government-banking-forms",
+    "title": "Gov/Banking: Don’t lose applications and forms",
+    "sector": "Gov services",
+    "summary": "Filling a long application on a government or banking portal — page froze or session ended? LifeUndo stores entered data locally. Reopen the form and restore in one click. No cloud, no data sent — everything stays in your browser.",
+    "cta": "Download"
+  }
+]

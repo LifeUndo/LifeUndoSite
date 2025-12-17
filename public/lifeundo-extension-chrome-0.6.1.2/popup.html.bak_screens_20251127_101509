@@ -1,0 +1,1043 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>GetLifeUndo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      :root {
+        --bg: #020617;
+        --panel: #020617;
+        --border: #1f2937;
+        --text: #e5e7eb;
+        --muted: #9ca3af;
+        --accent: #22c55e;
+        --accent-soft: rgba(34, 197, 94, 0.18);
+        --accent2: #0ea5e9;
+        --radius-lg: 18px;
+        --radius-md: 12px;
+        --radius-pill: 999px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        width: 420px;
+
+        font-family: -apple-system, system-ui, Segoe UI, Roboto, Arial, sans-serif;
+        background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.18), transparent 55%),
+          radial-gradient(circle at bottom right, rgba(129, 140, 248, 0.28), transparent 60%), #020617;
+        color: var(--text);
+        /* внешний скролл попапа */
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+
+      body.settings-open {
+        /* при открытых настройках тоже оставляем один внешний скролл */
+        overflow-y: auto;
+      }
+
+      .root {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        padding: 16px 18px 0 18px;
+        border-radius: 24px;
+      }
+
+      /* Header */
+
+      .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 18px;
+      }
+
+      .header-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .logo-title {
+        font-size: 18px;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        color: #e5e7eb;
+      }
+
+      .capsules-row {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 2px 0;
+      }
+
+      .capsule {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 20px;
+        padding: 2px 10px;
+        border-radius: var(--radius-pill);
+        border: 1px solid rgba(15, 23, 42, 0.9);
+        background: rgba(15, 23, 42, 0.96);
+        font-size: 11px;
+        color: #e5e7eb;
+        line-height: 1.3;
+      }
+
+      .capsule-ghost {
+        background: linear-gradient(90deg, rgba(15, 23, 42, 0.95), rgba(30, 64, 175, 0.9));
+        color: #cbd5f5;
+        border-color: rgba(30, 64, 175, 0.95);
+      }
+
+      .capsule-plan {
+        background: linear-gradient(90deg, #16a34a, #22c55e);
+        border-color: #22c55e;
+        color: #ecfdf5;
+        font-weight: 600;
+        font-size: 10px;
+        padding-top: 1px;
+        padding-bottom: 1px;
+      }
+
+      .capsule-lang {
+        padding: 0;
+        display: inline-flex;
+        overflow: hidden;
+        border-radius: var(--radius-pill);
+        border: 1px solid rgba(15, 23, 42, 0.9);
+        background: rgba(15, 23, 42, 0.9);
+      }
+
+      .capsule-lang button {
+        border: none;
+        background: transparent;
+        color: #9ca3af;
+        font-size: 11px;
+        padding: 3px 9px;
+        cursor: pointer;
+      }
+
+      .capsule-lang button.active {
+        background: rgba(15, 23, 42, 0.98);
+        color: #e5e7eb;
+      }
+
+      .gear-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 999px;
+        border: 1px solid rgba(15, 23, 42, 0.9);
+        background: radial-gradient(circle at 30% 30%, rgba(148, 163, 184, 0.3), transparent 60%),
+          rgba(15, 23, 42, 0.96);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: #e5e7eb;
+        font-size: 17px;
+      }
+
+      .gear-btn:hover {
+        background: radial-gradient(circle at 30% 30%, rgba(148, 163, 184, 0.5), transparent 60%),
+          rgba(15, 23, 42, 1);
+        color: #f9fafb;
+      }
+
+      /* Main hero */
+
+      .hero {
+        flex: 1;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        padding-right: 4px;
+      }
+
+      .hero-title {
+        font-size: 20px;
+        font-weight: 600;
+        line-height: 1.4;
+        margin-bottom: 4px;
+      }
+
+      .hero-sub {
+        font-size: 13px;
+        color: #cbd5f5;
+        margin-bottom: 14px;
+      }
+
+      .card {
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--border);
+        background:
+          radial-gradient(circle at top left, rgba(56, 189, 248, 0.12), transparent 60%),
+          radial-gradient(circle at bottom right, rgba(129, 140, 248, 0.18), transparent 60%),
+          rgba(15, 23, 42, 0.97);
+        padding: 12px 12px 10px 12px;
+        font-size: 13px;
+        margin-bottom: 10px;
+      }
+
+      .card-header {
+        font-weight: 500;
+        margin-bottom: 6px;
+      }
+
+      .card-list {
+        margin: 0;
+        padding-left: 18px;
+        color: var(--text);
+        font-size: 12px;
+      }
+
+      .card-list li {
+        margin-bottom: 4px;
+      }
+
+      /* Settings drawer */
+
+      .settings-overlay {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        justify-content: flex-end;
+        pointer-events: none;
+        overflow: hidden;
+      }
+
+      .settings-panel {
+        width: 100%;
+        max-width: 420px;
+
+        border-radius: var(--radius-lg);
+        border: 1px solid rgba(15, 23, 42, 0.95);
+        background:
+          radial-gradient(circle at top left, rgba(56, 189, 248, 0.22), transparent 55%),
+          radial-gradient(circle at bottom right, rgba(129, 140, 248, 0.32), transparent 60%),
+          #020617;
+        box-shadow: 0 22px 60px rgba(15, 23, 42, 0.9);
+        display: flex;
+        flex-direction: column;
+        transform: translateX(100%);
+        opacity: 0;
+        transition: transform 0.2s ease-out, opacity 0.2s ease-out;
+        padding: 14px 16px 10px 16px;
+        box-sizing: border-box;
+      }
+
+      .settings-overlay.open {
+        pointer-events: auto;
+      }
+
+      .settings-overlay.open .settings-panel {
+        transform: translateX(0);
+        opacity: 1;
+      }
+
+      .settings-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+      }
+
+      .settings-header-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .settings-back {
+        width: 28px;
+        height: 28px;
+        border-radius: 999px;
+        border: 1px solid rgba(15, 23, 42, 0.9);
+        background: rgba(15, 23, 42, 0.96);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: #e5e7eb;
+        font-size: 16px;
+      }
+
+      .settings-back:hover {
+        background: rgba(15, 23, 42, 1);
+      }
+
+      .settings-title {
+        font-size: 16px;
+        font-weight: 600;
+      }
+
+      .settings-menu {
+        border-radius: var(--radius-lg);
+        border: 1px solid rgba(15, 23, 42, 0.9);
+        background: rgba(15, 23, 42, 0.96);
+        padding: 10px 10px 8px 10px;
+        margin-bottom: 10px;
+      }
+
+      .settings-menu-title {
+        font-size: 13px;
+        font-weight: 500;
+        margin-bottom: 6px;
+      }
+
+      .settings-tab-list {
+        display: grid;
+        grid-template-columns: 0.8fr 1.4fr 1.4fr 0.8fr;
+        gap: 6px;
+      }
+
+      .settings-tab-btn {
+        width: 100%;
+        min-height: 30px;
+        border-radius: 999px;
+        border: 1px solid rgba(51, 65, 85, 0.95);
+        background: rgba(15, 23, 42, 0.9);
+        color: #e5e7eb;
+        font-size: 12px;
+        padding: 4px 6px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        white-space: nowrap;
+        transition: background 0.16s ease, color 0.16s ease, border-color 0.16s ease;
+      }
+
+      .settings-tab-btn.active {
+        border-color: rgba(103, 232, 249, 0.9);
+        background: rgba(15, 23, 42, 0.9);
+        box-shadow: 0 0 0 1px rgba(8, 145, 178, 0.7), 0 10px 24px rgba(8, 47, 73, 0.8);
+        color: #ecfeff;
+      }
+
+      .settings-body {
+        flex: 1;
+        min-height: 0;
+        /* убираем внутреннюю прокрутку, чтобы скроллился только весь попап */
+        overflow-y: visible;
+        padding-right: 0;
+      }
+
+      .settings-section {
+        display: none;
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--border);
+        background:
+          radial-gradient(circle at top left, rgba(56, 189, 248, 0.16), transparent 60%),
+          radial-gradient(circle at bottom right, rgba(129, 140, 248, 0.22), transparent 60%),
+          rgba(15, 23, 42, 0.96);
+        padding: 12px 14px;
+        font-size: 13px;
+      }
+
+      .settings-section.active {
+        display: block;
+      }
+
+      .settings-section-title {
+        font-size: 13px;
+        font-weight: 500;
+        margin-bottom: 6px;
+      }
+
+      .settings-section-sub {
+        font-size: 12px;
+        color: var(--muted);
+        margin-bottom: 8px;
+      }
+
+      .stg-card {
+        margin-top: 8px;
+        margin-bottom: 8px;
+        border-radius: var(--radius-md);
+        border: 1px solid rgba(30, 64, 175, 0.6);
+        background: radial-gradient(circle at top left, rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.96));
+        padding: 10px 10px 8px 10px;
+      }
+
+      .stg-card-title {
+        font-size: 13px;
+        font-weight: 500;
+        margin-bottom: 6px;
+      }
+
+      .stg-select {
+        width: 100%;
+        max-width: 220px;
+        height: 30px;
+        border-radius: 999px;
+        border: 1px solid rgba(51, 65, 85, 0.95);
+        background: rgba(15, 23, 42, 0.95);
+        color: #e5e7eb;
+        font-size: 12px;
+        padding: 0 10px;
+      }
+
+      .stg-muted {
+        font-size: 11px;
+        color: #9ca3af;
+        margin-top: 4px;
+      }
+
+      .stg-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        margin-bottom: 6px;
+      }
+
+      .stg-row-label {
+        font-size: 12px;
+        color: #e5e7eb;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .stg-hint {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 16px;
+        height: 16px;
+        border-radius: 999px;
+        background: rgba(30, 64, 175, 0.9);
+        color: #e5e7eb;
+        font-size: 10px;
+        border: 1px solid rgba(30, 64, 175, 0.95);
+      }
+
+      .stg-toggle {
+        min-width: 64px;
+        height: 28px;
+        border-radius: 999px;
+        border: 1px solid rgba(51, 65, 85, 0.95);
+        background: rgba(30, 64, 175, 0.4);
+        color: #e5e7eb;
+        font-size: 11px;
+        padding: 0 10px;
+        cursor: pointer;
+      }
+
+      .stg-toggle.on {
+        background: linear-gradient(135deg, #059669, #22c55e);
+        border-color: #22c55e;
+        color: #ecfdf5;
+        box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.9), 0 8px 18px rgba(6, 95, 70, 0.8);
+      }
+
+      .stg-input {
+        width: 100%;
+        height: 32px;
+        border-radius: 999px;
+        border: 1px solid rgba(51, 65, 85, 0.95);
+        background: rgba(15, 23, 42, 0.95);
+        color: #e5e7eb;
+        font-size: 12px;
+        padding: 0 12px;
+        margin-top: 4px;
+      }
+
+      .stg-email-note {
+        margin-top: 6px;
+        line-height: 1.45;
+      }
+
+      .stg-actions {
+        margin-top: 8px;
+        display: flex;
+        justify-content: flex-end;
+      }
+
+      .stg-primary {
+        border-radius: 999px;
+        border: 1px solid rgba(56, 189, 248, 0.9);
+        background: linear-gradient(135deg, #0ea5e9, #1d4ed8);
+        color: #f9fafb;
+        font-size: 12px;
+        padding: 5px 16px;
+        cursor: pointer;
+        box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.9), 0 10px 24px rgba(15, 23, 42, 0.9);
+      }
+
+      .stg-primary img {
+        width: 16px;
+        height: 16px;
+        border-radius: 4px;
+        margin-right: 6px;
+      }
+
+      .btn-sub-pro {
+        background: linear-gradient(135deg, #4f46e5, #4338ca);
+        border-color: #6366f1;
+      }
+
+      .btn-sub-vip {
+        background: linear-gradient(135deg, #059669, #22c55e);
+        border-color: #22c55e;
+      }
+
+      .btn-sub-team {
+        background: linear-gradient(135deg, #0d9488, #14b8a6);
+        border-color: #14b8a6;
+      }
+
+      .btn-about-social,
+      .btn-about-store {
+        background: transparent;
+        border-color: rgba(56, 189, 248, 0.5);
+        box-shadow: none;
+      }
+
+      /* Footer */
+
+      .footer {
+        margin-top: 0;
+        padding: 10px 18px 6px 18px;
+        border-top: 1px solid rgba(30, 64, 175, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 11px;
+        color: #e5e7eb;
+        background:
+          linear-gradient(to top, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.55));
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        box-sizing: border-box;
+        border-radius: 14px 14px 0 0;
+      }
+
+      .footer-links {
+        display: flex;
+        gap: 14px;
+      }
+
+      .footer-link {
+        cursor: pointer;
+        color: #e5e7eb;
+      }
+
+      .footer-link:hover {
+        text-decoration: underline;
+      }
+
+      body.settings-open .footer {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="root" style="position: relative;">
+      <header class="header">
+        <div class="header-left">
+          <div class="logo-title">GetLifeUndo</div>
+          <div class="capsules-row">
+            <div id="ppVersion" class="capsule capsule-ghost">v0.0.0</div>
+            <div id="ppTrial" class="capsule capsule-plan">TRIAL</div>
+            <div class="capsule capsule-lang">
+              <button id="ppLangRu" class="active">RU</button>
+              <button id="ppLangEn">EN</button>
+            </div>
+          </div>
+        </div>
+        <button id="btnGear" class="gear-btn" type="button">⚙</button>
+      </header>
+
+      <main class="hero">
+        <div id="heroContainer"></div>
+      </main>
+
+      <div id="settingsOverlay" class="settings-overlay">
+        <div class="settings-panel">
+          <header class="settings-header">
+            <div class="settings-header-left">
+              <button id="stBack" class="settings-back" type="button">←</button>
+              <div id="stTitle" class="settings-title">Настройки</div>
+            </div>
+          </header>
+
+          <section class="settings-menu">
+            <div id="stMenuTitle" class="settings-menu-title">Меню</div>
+            <div class="settings-tab-list">
+              <button class="settings-tab-btn" data-tab="general" id="stTabGeneral">Общее</button>
+              <button class="settings-tab-btn" data-tab="subscription" id="stTabSub">Подписка</button>
+              <button class="settings-tab-btn" data-tab="apps" id="stTabApps">Приложения</button>
+              <button class="settings-tab-btn" data-tab="about" id="stTabAbout">О нас</button>
+              <button class="settings-tab-btn" data-tab="faq" id="stTabFaq">FAQ</button>
+              <button class="settings-tab-btn" data-tab="activity" id="stTabActivity">Лента</button>
+              <button class="settings-tab-btn" data-tab="devices" id="stTabDevices">Устройства</button>
+              <button class="settings-tab-btn" data-tab="team" id="stTabTeam">TEAM</button>
+            </div>
+          </section>
+
+          <main class="settings-body">
+            <section id="stPanelGeneral" class="settings-section">
+              <div class="settings-section-title">Общие настройки</div>
+              <div class="settings-section-sub">
+                Язык интерфейса, отображение списка внутри окна и базовые режимы работы.
+              </div>
+
+              <div class="stg-card">
+                <div class="stg-card-title">Язык</div>
+                <select id="stGenLang" class="stg-select">
+                  <option value="ru">Русский</option>
+                  <option value="en">English</option>
+                </select>
+                <div id="stGenVersion" class="stg-muted"></div>
+              </div>
+
+              <div class="stg-card">
+                <div class="stg-row">
+                  <div class="stg-row-label">
+                    Показывать список здесь
+                    <span class="stg-hint" title="Показывать список внутри окна приложения">!</span>
+                  </div>
+                  <button id="stGenShowHere" class="stg-toggle" type="button">OFF</button>
+                </div>
+                <div class="stg-row">
+                  <div class="stg-row-label">
+                    Скриншоты
+                    <span class="stg-hint" title="Автоматически сохранять скриншоты">!</span>
+                  </div>
+                  <button id="stGenShots" class="stg-toggle" type="button">OFF</button>
+                </div>
+                <div class="stg-row">
+                  <div class="stg-row-label">
+                    Видео
+                    <span class="stg-hint" title="Запись короткого видео (позже)">!</span>
+                  </div>
+                  <button id="stGenVideo" class="stg-toggle" type="button">OFF</button>
+                </div>
+                <div class="stg-row">
+                  <div class="stg-row-label">
+                    Режим мероприятия
+                    <span class="stg-hint" title="Скрывать чувствительные данные на показах">!</span>
+                  </div>
+                  <button id="stGenEvent" class="stg-toggle" type="button">OFF</button>
+                </div>
+              </div>
+
+              <div class="stg-card">
+                <div class="stg-card-title">Email для аккаунта</div>
+                <input
+                  id="stGenEmail"
+                  type="email"
+                  class="stg-input"
+                  placeholder="you@example.com"
+                />
+
+                <div class="stg-muted stg-email-note">
+                  Используется для триала, подписки и привязки устройств. Укажите рабочий адрес. Тот же адрес
+                  будет получать только важные новости о релизах и изменениях условий.
+                </div>
+                <div class="stg-actions">
+                  <button id="stGenEmailSave" class="stg-primary" type="button">Отправить</button>
+                </div>
+              </div>
+            </section>
+
+            <section id="stPanelApps" class="settings-section">
+              <div class="settings-section-title" id="appsTitle">Приложения GetLifeUndo</div>
+              <div class="settings-section-sub" id="appsSub">
+                Десктопный клиент, Android‑приложение и другие клиенты Mesh.
+              </div>
+
+              <div class="stg-card" id="appsDesktopCard">
+                <div class="stg-card-title" id="appsDesktopTitle">Desktop</div>
+                <ul class="card-list" id="appsDesktopList">
+                  <li id="appsDesktopWin">Windows — Mesh 0.6.1.1 (эта сборка)</li>
+                  <li id="appsDesktopMac">macOS — в разработке</li>
+                </ul>
+                <div class="stg-row" style="align-items:flex-start;gap:10px;margin-top:8px;flex-wrap:wrap;">
+                  <div class="stg-row-label" style="flex:1;min-width:160px;">
+                    <span id="appsDesktopQrText">
+                      Сканируйте QR, чтобы открыть страницу загрузок GetLifeUndo.
+                    </span>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+                    <div
+                      style="border-radius:12px;border:1px solid rgba(51,65,85,0.95);padding:4px;background:rgba(15,23,42,0.95);"
+                    >
+                      <div
+                        id="appsDesktopQr"
+                        style="width:88px;height:88px;background-size:cover;background-position:center;background-image:url('https://api.qrserver.com/v1/create-qr-code/?size=256x256&margin=2&data=https%3A%2F%2Fgetlifeundo.com%2Fru%2Fdownloads');"
+                      ></div>
+                    </div>
+                    <div class="stg-muted" style="font-size:10px;word-break:break-all;" id="appsDesktopUrl">
+                      https://getlifeundo.com/ru/downloads
+                    </div>
+                    <button
+                      id="btnAppsDesktopShare"
+                      class="stg-primary"
+                      type="button"
+                      style="padding-left:12px;padding-right:12px;"
+                    >
+                      Поделиться ссылкой
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="stg-card" id="appsAndroidCard">
+                <div class="stg-card-title" id="appsAndroidTitle">Android</div>
+                <div class="stg-row" style="align-items:flex-start;flex-direction:column;gap:6px;">
+                  <div class="stg-row-label" style="width:100%;justify-content:space-between;">
+                    <span id="appsAndroidRustore">RuStore</span>
+                    <span class="stg-hint" title="Магазин приложений RuStore">A</span>
+                  </div>
+                  <div class="stg-muted" style="font-size:11px;" id="appsAndroidRustoreNote">
+                    Доступно в RuStore.
+                  </div>
+                  <div class="stg-actions" style="justify-content:flex-start;gap:8px;">
+                    <button id="btnAppsRustore" class="stg-primary" type="button">Открыть RuStore</button>
+                  </div>
+                </div>
+                <div class="stg-row" style="align-items:flex-start;flex-direction:column;gap:6px;margin-top:10px;">
+                  <div class="stg-row-label" style="width:100%;justify-content:space-between;">
+                    <span id="appsAndroidGithub">GitHub</span>
+                    <span class="stg-hint" title="APK и сборки для ручной установки">G</span>
+                  </div>
+                  <div class="stg-muted" style="font-size:11px;" id="appsAndroidGithubNote">
+                    APK (ручная установка) и dev‑сборки.
+                  </div>
+                  <div class="stg-actions" style="justify-content:flex-start;gap:8px;">
+                    <button id="btnAppsApk" class="stg-primary" type="button">Открыть GitHub</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="stg-card" id="appsAppleCard">
+                <div class="stg-card-title" id="appsAppleTitle">Apple</div>
+                <ul class="card-list" id="appsAppleList">
+                  <li id="appsAppleIos">iOS — в разработке</li>
+                  <li id="appsAppleMac">macOS‑клиент — в разработке</li>
+                </ul>
+              </div>
+
+              <div class="stg-card" id="appsBrowserCard">
+                <div class="stg-card-title" id="appsBrowserTitle">Браузерные расширения</div>
+                <ul class="card-list" id="appsBrowserList">
+                  <li id="appsBrowserChrome">Chrome — в разработке</li>
+                  <li id="appsBrowserSafari">Safari — в разработке</li>
+                  <li id="appsBrowserEdge">Edge — в разработке</li>
+                </ul>
+              </div>
+
+              <div class="stg-card" id="appsTabletCard">
+                <div class="stg-card-title" id="appsTabletTitle">Tablet / iPad</div>
+                <div class="stg-muted" id="appsTabletText">Планшетные клиенты — в разработке.</div>
+              </div>
+
+              <div class="stg-card" id="appsDevicesNoteCard">
+                <div class="stg-card-title" id="appsDevicesNoteTitle">Ваши устройства</div>
+                <div class="stg-muted" id="appsDevicesNoteText">
+                  Этот desktop‑клиент уже готов. Раздел «Ваши устройства» в настройках показывает текущий ПК и
+                  позволит позже привязывать другие устройства.
+                </div>
+              </div>
+            </section>
+
+            <section id="stPanelSubscription" class="settings-section">
+              <div class="settings-section-title" id="subTitle">Подписка</div>
+              <div class="settings-section-sub" id="subSub">
+                Тарифы PRO, VIP и TEAM 5 для персонального и командного использования.
+              </div>
+
+              <div class="stg-card" style="margin-bottom:10px;">
+                <div class="stg-row" style="align-items:center;justify-content:space-between;gap:8px;">
+                  <div class="stg-row-label" style="gap:6px;">
+                    <span id="subStatusLabel">Статус</span>
+                  </div>
+                  <div class="stg-muted" id="subStatusValue">Не активна</div>
+                </div>
+              </div>
+
+              <div class="stg-card" id="subCardPro" style="margin-bottom:8px;">
+                <div class="stg-card-title" id="subProTitle">PRO (месяц, для одного пользователя)</div>
+                <div class="stg-muted" id="subProPrice" style="font-size:12px;margin-bottom:8px;">ежемесячно</div>
+                <div class="stg-actions" style="justify-content:flex-start;">
+                  <button id="btnSubPro" class="stg-primary btn-sub-pro" type="button">Оплатить — ₽599</button>
+                </div>
+              </div>
+
+              <div class="stg-card" id="subCardVip" style="margin-bottom:8px;">
+                <div class="stg-card-title" id="subVipTitle">VIP (пожизненно, для одного пользователя)</div>
+                <div class="stg-muted" id="subVipPrice" style="font-size:12px;margin-bottom:8px;">единовременно</div>
+                <div class="stg-actions" style="justify-content:flex-start;">
+                  <button id="btnSubVip" class="stg-primary btn-sub-vip" type="button">Оплатить — ₽9990</button>
+                </div>
+              </div>
+
+              <div class="stg-card" id="subCardTeam">
+                <div class="stg-card-title" id="subTeamTitle">TEAM 5 (для команд и организаций)</div>
+                <div class="stg-muted" id="subTeamPrice" style="font-size:12px;margin-bottom:8px;">5 мест / месяц</div>
+                <div class="stg-actions" style="justify-content:flex-start;">
+                  <button id="btnSubTeam" class="stg-primary btn-sub-team" type="button">Оплатить — ₽2990</button>
+                </div>
+              </div>
+            </section>
+
+            <section id="stPanelTeam" class="settings-section">
+              <div class="settings-section-title" id="teamTitle">TEAM и TEAM 5</div>
+              <div class="settings-section-sub" id="teamSub">
+                План TEAM 5 для команд и организаций, слоты устройств и админ‑панель.
+              </div>
+
+              <div class="stg-card" id="teamIntroCard">
+                <div class="stg-card-title" id="teamIntroTitle">TEAM / TEAM 5</div>
+                <div class="stg-muted" id="teamIntroTextMain">
+                  TEAM — это доступ к GetLifeUndo для команды или небольшой организации. Тариф TEAM 5 рассчитан на 5
+                  устройств (людей или рабочих станций) и даёт бонус +5% к каждому пополнению счёта команды.
+                </div>
+                <div class="stg-muted" style="font-size:11px;margin-top:6px;" id="teamIntroTextPilot">
+                  Для пилотных команд действует индивидуальное предложение и дополнительные бонусы за обратную связь.
+                </div>
+              </div>
+
+              <div class="stg-card" id="teamHowCard">
+                <div class="stg-card-title" id="teamHowTitle">Как подключиться</div>
+                <div class="stg-muted" id="teamHowText">
+                  Напишите на support@getlifeundo.com с темой TEAM, укажите название команды/организации, примерное
+                  количество людей и нужный период. Мы создадим TEAM‑аккаунт, пришлём договор и активационные ключи.
+                </div>
+              </div>
+
+              <div class="stg-card" id="teamAdminCard">
+                <div class="stg-row" style="align-items:flex-start;flex-direction:column;gap:6px;">
+                  <div class="stg-row-label" style="width:100%;justify-content:space-between;">
+                    <span id="teamAdminTitle">TEAM / админ‑панель</span>
+                    <span class="stg-hint" title="Управление устройствами и ключами TEAM">T</span>
+                  </div>
+                  <div class="stg-muted" id="teamAdminText">
+                    В десктопном клиенте раздел TEAM показывает организацию, ключи и устройства. В браузерном
+                    расширении используется тот же backend для проверки статусов, но управление происходит через
+                    getlifeundo.com/admin.
+                  </div>
+                  <div class="stg-actions" style="justify-content:flex-start;gap:8px;">
+                    <button id="btnTeamAdmin" class="stg-primary" type="button">Открыть админ‑панель</button>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section id="stPanelActivity" class="settings-section">
+              <div class="settings-section-title" id="tlTitle">Лента</div>
+              <div class="settings-section-sub" id="tlSub">
+                Быстрый доступ к вкладкам, скриншотам и тексту. В браузерной версии здесь показываются недавние
+                вкладки этого браузера.
+              </div>
+
+              <div class="stg-card" id="tlTabsCard">
+                <div class="stg-card-title" id="tlTabsTitle">Вкладки</div>
+                <div class="stg-muted" id="tlTabsHint">
+                  Недавние вкладки этого браузера. Нажмите на строку, чтобы открыть вкладку снова.
+                </div>
+                <ul class="card-list" id="tlTabsList"></ul>
+                <div class="stg-muted" style="font-size:11px;" id="tlTabsEmpty">
+                  Пока нет недавних закрытых вкладок.
+                </div>
+              </div>
+
+              <div class="stg-card" id="tlShotsCard">
+                <div class="stg-card-title" id="tlShotsTitle">Скриншоты</div>
+                <div class="stg-muted" id="tlShotsText1">
+                  Десктопное приложение отслеживает папки скриншотов (Изображения/Скриншоты, OneDrive, Dropbox и др.) и
+                  показывает последние кадры в удобном списке.
+                </div>
+                <div class="stg-muted" id="tlShotsText2">
+                  В браузерном расширении мы не читаем файловую систему: здесь только описание поведения, без
+                  отображения содержимого.
+                </div>
+              </div>
+
+              <div class="stg-card" id="tlTextCard">
+                <div class="stg-card-title" id="tlTextTitle">Текст</div>
+                <div class="stg-muted" id="tlTextText1">
+                  В десктопе Лента хранит историю текста из буфера обмена и позволяет быстро вернуться к нужным
+                  фрагментам.
+                </div>
+                <div class="stg-muted" id="tlTextText2">
+                  В браузере текстовые действия ограничены вкладками и формами, поэтому здесь Лента выступает как
+                  справочный раздел.
+                </div>
+              </div>
+            </section>
+
+            <section id="stPanelDevices" class="settings-section">
+              <div class="settings-section-title" id="devTitle">Ваши устройства</div>
+              <div class="settings-section-sub" id="devSub">
+                Обзор устройств TEAM и базовая информация об этом браузере. Полная связка устройств управляется через
+                десктопный клиент и админ‑панель.
+              </div>
+
+              <div class="stg-card" id="devThisDeviceCard">
+                <div class="stg-card-title" id="devThisDeviceTitle">Это устройство</div>
+                <div class="stg-muted" id="devThisDeviceText">
+                  Расширение браузера GetLifeUndo. Тип клиента: browser‑extension. Для полноценной работы TEAM и слотов
+                  устройств подключите хотя бы один десктопный клиент.
+                </div>
+              </div>
+
+              <div class="stg-card" id="devHowLinkCard">
+                <div class="stg-card-title" id="devHowLinkTitle">Как связать устройства</div>
+                <div class="stg-muted" id="devHowLinkText1">
+                  В десктопной версии есть раздел «Ваши устройства» и коды привязки (PIN). Через него можно связать до 5
+                  устройств в рамках TEAM 5.
+                </div>
+                <div class="stg-muted" id="devHowLinkText2">
+                  Браузерное расширение будет отображаться как ещё одно устройство, если вы отправите письмо на
+                  legal@getlifeundo.com с этого же email, что и в десктопе, и активируете TEAM.
+                </div>
+              </div>
+            </section>
+
+            <section id="stPanelAbout" class="settings-section">
+              <div class="settings-section-sub" id="aboutSub">
+                Социальные сети, ссылки на магазины и полезные действия вокруг GetLifeUndo.
+              </div>
+
+              <div class="stg-card" id="aboutSocialCard">
+                <div class="stg-card-title" id="aboutSocialTitle">Соцсети и каналы</div>
+                <div class="stg-row" style="flex-direction:column;align-items:flex-start;gap:6px;">
+                  <div class="stg-row-label" id="aboutSocialList">
+                    Telegram, VK, X, YouTube, Reddit — подробные новости и разборы обновлений.
+                  </div>
+                  <div class="stg-actions" style="justify-content:flex-start;gap:8px;flex-wrap:wrap;">
+                    <button id="btnAboutTelegram" class="stg-primary btn-about-social" type="button">
+                      <img src="https://icons.duckduckgo.com/ip3/t.me.ico" alt="Telegram" />
+                      Telegram
+                    </button>
+                    <button id="btnAboutVK" class="stg-primary btn-about-social" type="button">
+                      <img src="https://icons.duckduckgo.com/ip3/vk.com.ico" alt="VK" />
+                      VK
+                    </button>
+                    <button id="btnAboutX" class="stg-primary btn-about-social" type="button">
+                      <img src="https://icons.duckduckgo.com/ip3/x.com.ico" alt="X" />
+                      X
+                    </button>
+                    <button id="btnAboutYouTube" class="stg-primary btn-about-social" type="button">
+                      <img src="https://icons.duckduckgo.com/ip3/youtube.com.ico" alt="YouTube" />
+                      YouTube
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="stg-card" id="aboutStoresCard">
+                <div class="stg-card-title" id="aboutStoresTitle">Магазины и расширения</div>
+                <div class="stg-row" style="flex-direction:column;align-items:flex-start;gap:6px;">
+                  <div class="stg-row-label" id="aboutStoresList">
+                    RuStore, Firefox Add‑ons, GitHub и другие площадки, где появляются клиенты LifeUndo.
+                  </div>
+                  <div class="stg-actions" style="justify-content:flex-start;gap:8px;flex-wrap:wrap;">
+                    <button id="btnAboutFirefox" class="stg-primary btn-about-store" type="button">
+                      <img src="https://icons.duckduckgo.com/ip3/addons.mozilla.org.ico" alt="Firefox Add-ons" />
+                      Firefox Add‑ons
+                    </button>
+                    <button id="btnAboutRuStore" class="stg-primary btn-about-store" type="button">
+                      <img src="https://icons.duckduckgo.com/ip3/rustore.ru.ico" alt="RuStore" />
+                      RuStore
+                    </button>
+                    <button id="btnAboutGitHub" class="stg-primary btn-about-store" type="button">
+                      <img src="https://icons.duckduckgo.com/ip3/github.com.ico" alt="GitHub" />
+                      GitHub
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="stg-card" id="aboutActionsCard">
+                <div class="stg-card-title" id="aboutActionsTitle">Поделиться и оценить</div>
+                <div class="stg-row" style="flex-direction:column;align-items:flex-start;gap:6px;">
+                  <div class="stg-row-label" id="aboutActionsText">
+                    Поделитесь ссылкой на getlifeundo.com и при желании оцените приложение в магазине.
+                  </div>
+                  <div class="stg-actions" style="justify-content:flex-start;gap:8px;flex-wrap:wrap;">
+                    <button id="btnAboutShare" class="stg-primary" type="button">Поделиться</button>
+                    <button id="btnAboutRate" class="stg-primary" type="button">Оценить</button>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section id="stPanelFaq" class="settings-section">
+              <div class="settings-section-title" id="faqTitle">FAQ</div>
+              <div class="settings-section-sub" id="faqSub">
+                Короткие ответы про GetLifeUndo, хранение данных и подписку.
+              </div>
+
+              <div class="stg-card" id="faqMainCard">
+                <div class="stg-card-title" id="faqMainTitle">Частые вопросы</div>
+                <div class="stg-muted" style="margin-bottom:6px;" id="faqWhatIsTitle">
+                  Что такое GetLifeUndo?
+                </div>
+                <div class="stg-muted" id="faqWhatIsText">
+                  Это локальный таймлайн вашей деятельности: скриншоты и текст из буфера. Помогает вернуться к тому,
+                  что вы делали 5 минут/час/день назад.
+                </div>
+                <div class="stg-muted" style="margin-top:8px;margin-bottom:6px;" id="faqHowWorksTitle">
+                  Как это работает?
+                </div>
+                <div class="stg-muted" id="faqHowWorksText">
+                  Десктопное приложение отслеживает системные папки скриншотов и сохраняет текст из буфера обмена. Всё
+                  остаётся на вашем диске.
+                </div>
+                <div class="stg-muted" style="margin-top:8px;margin-bottom:6px;" id="faqWhereStoreTitle">
+                  Где хранятся данные?
+                </div>
+                <div class="stg-muted" id="faqWhereStoreText">
+                  Локально, в каталоге данных приложения. Папку можно открыть через настройки десктопной версии.
+                </div>
+                <div class="stg-muted" style="margin-top:8px;margin-bottom:6px;" id="faqNeedSetupTitle">
+                  Нужно ли что‑то настраивать?
+                </div>
+                <div class="stg-muted" id="faqNeedSetupText">
+                  По умолчанию всё работает сразу. Дополнительно вы можете добавить свои папки для наблюдения и выбрать
+                  место хранения.
+                </div>
+                <div class="stg-muted" style="margin-top:8px;margin-bottom:6px;" id="faqCancelSubTitle">
+                  Что если отменить подписку?
+                </div>
+                <div class="stg-muted" id="faqCancelSubText">
+                  Локальный доступ к вашим данным сохранится. Премиум‑функции и будущие облачные возможности станут
+                  недоступны, но история останется на вашем устройстве.
+                </div>
+              </div>
+            </section>
+          </main>
+        </div>
+      </div>
+
+      <footer class="footer">
+        <div class="footer-links">
+          <span id="ftSite" class="footer-link">Сайт</span>
+          <span id="ftGitHub" class="footer-link">GitHub</span>
+          <span id="ftPrivacy" class="footer-link">Приватность</span>
+          <span id="ftOffer" class="footer-link">Оферта</span>
+        </div>
+        <div>GetLifeUndo™</div>
+      </footer>
+    </div>
+
+    <script src="licenseCore.js"></script>
+    <script src="telemetry.js"></script>
+    <script src="popup.js"></script>
+  </body>
+</html>

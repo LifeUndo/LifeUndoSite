@@ -1,0 +1,49 @@
+openapi: 3.0.3
+info:
+  title: GetLifeUndo API
+  version: 0.1.0
+servers:
+  - url: https://getlifeundo.com
+paths:
+  /api/healthz:
+    get:
+      summary: Health check
+      responses:
+        '200':
+          description: OK
+  /api/payments/freekassa/create:
+    post:
+      summary: Create FreeKassa payment link
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                productId:
+                  type: string
+                  enum: [pro_monthly, vip_lifetime, team_5_monthly, starter_6m]
+      responses:
+        '200':
+          description: Payment link created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  pay_url:
+                    type: string
+                  orderId:
+                    type: string
+        '400':
+          description: Invalid product
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean }
+                  error: { type: string }

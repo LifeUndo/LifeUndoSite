@@ -1,0 +1,34 @@
+﻿[
+  {
+    "version": "0.6.1.1",
+    "platform": "Extensions/Desktop",
+    "publishedAt": "2025-11-25T00:00:00Z",
+    "items": [
+      "GOLD-релиз Windows desktop-клиента и расширений 0.6.1.1 как единой системы лицензий.",
+      "TEAM-тариф: до 5 устройств в одной подписке и множество (50+) ключей для пользователей/устройств.",
+      "Прозрачные статусы лицензии (trial/TEAM), счётчики задействованных устройств и ключей.",
+      "Подготовка к B2B/B2G-подключениям: единая схема активации и продления для организаций.",
+      "Новый экран подписки TEAM (PRO/VIP/TEAM + FreeKassa) и разъясняющие тексты в настройках.",
+      "Раздел \"Приложения\" в настройках, QR-код страницы загрузок, обновлённый футер и страница /downloads."
+    ],
+    "links": {
+      "firefox": "https://addons.mozilla.org/ru/firefox/addon/lifeundo/",
+      "github": "https://github.com/LifeUndo/LifeUndo/releases/tag/desktop-0.6.1.1-ui-gold3"
+    }
+  },
+  {
+    "version": "1.0.0+10 (rev5a)",
+    "platform": "Android",
+    "publishedAt": "2025-11-05T00:00:00Z",
+    "items": [
+      "Android APK релиз (rev5a).",
+      "Tabs capture: бренд-иконки (в т.ч. DuckDuckGo), список 8+2.",
+      "Убраны Open/Install и раздел «Специальные», обновлены описания.",
+      "EN-локализация и подсказки."
+    ],
+    "links": {
+      "apk": "https://github.com/LifeUndo/LifeUndo/releases/tag/v1.0.0-10-rev5a",
+      "rustore": "https://www.rustore.ru/catalog/app/com.getlifeundo.lifeundo_app"
+    }
+  }
+]

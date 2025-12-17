@@ -1,0 +1,120 @@
+{
+  "extensionName": {
+    "message": "GetLifeUndo",
+    "description": "Extension name"
+  },
+  "extensionDescription": {
+    "message": "Ctrl+Z for your online life. Forms, tabs, clipboard — 100% local and private.",
+    "description": "Extension description"
+  },
+  "app_name": {
+    "message": "GetLifeUndo",
+    "description": "App name"
+  },
+  "free_version": {
+    "message": "Free Version",
+    "description": "Free version label"
+  },
+  "whats_new": {
+    "message": "What's new",
+    "description": "What's new button"
+  },
+  "upgrade_title": {
+    "message": "Upgrade to Pro",
+    "description": "Upgrade title"
+  },
+  "upgrade_cta": {
+    "message": "Upgrade to Pro",
+    "description": "Upgrade CTA"
+  },
+  "website": {
+    "message": "Website",
+    "description": "Website link"
+  },
+  "privacy": {
+    "message": "Privacy",
+    "description": "Privacy link"
+  },
+  "support": {
+    "message": "Support",
+    "description": "Support link"
+  },
+  "license": {
+    "message": "License",
+    "description": "License link"
+  },
+  "recent_inputs": {
+    "message": "Latest text inputs",
+    "description": "Recent inputs label"
+  },
+  "recent_tabs": {
+    "message": "Recently closed tabs",
+    "description": "Recent tabs label"
+  },
+  "clipboard": {
+    "message": "Clipboard history",
+    "description": "Clipboard label"
+  },
+  "popupTitle": {
+    "message": "GetLifeUndo",
+    "description": "Popup title"
+  },
+  "undoButton": {
+    "message": "Undo",
+    "description": "Undo button text"
+  },
+  "settingsButton": {
+    "message": "Settings",
+    "description": "Settings button text"
+  },
+  "licenseButton": {
+    "message": "License",
+    "description": "License button text"
+  },
+  "supportButton": {
+    "message": "Support",
+    "description": "Support button text"
+  },
+  "trialStatus": {
+    "message": "Trial: $DAYS$ days left",
+    "description": "Trial status message",
+    "placeholders": {
+      "days": {
+        "content": "$1",
+        "example": "7"
+      }
+    }
+  },
+  "proStatus": {
+    "message": "Pro License Active",
+    "description": "Pro license status"
+  },
+  "freeStatus": {
+    "message": "Free Version",
+    "description": "Free version status"
+  },
+  "licenseActivated": {
+    "message": "License activated successfully!",
+    "description": "License activation success message"
+  },
+  "invalidLicense": {
+    "message": "Invalid license key format",
+    "description": "Invalid license error message"
+  },
+  "nothingToUndo": {
+    "message": "Nothing to undo",
+    "description": "No undo items available"
+  },
+  "textRestored": {
+    "message": "Text restored",
+    "description": "Text restoration success"
+  },
+  "tabRestored": {
+    "message": "Tab restored",
+    "description": "Tab restoration success"
+  },
+  "clipboardRestored": {
+    "message": "Clipboard restored",
+    "description": "Clipboard restoration success"
+  }
+}

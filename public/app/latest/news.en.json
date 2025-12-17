@@ -1,0 +1,34 @@
+﻿[
+  {
+    "version": "0.6.1.1",
+    "platform": "Extensions/Desktop",
+    "publishedAt": "2025-11-25T00:00:00Z",
+    "items": [
+      "GOLD release of Windows desktop client and extensions 0.6.1.1 as a unified licensing system.",
+      "TEAM plan: up to 5 devices per subscription and many (50+) keys for users/devices.",
+      "Clear license states (trial/TEAM) with device and key counters.",
+      "Preparation for B2B/B2G: unified activation/renewal model for organizations.",
+      "New TEAM subscription screen (PRO/VIP/TEAM + FreeKassa) and explanatory texts in Settings.",
+      "'Apps' section in Settings, QR code for downloads page, updated footer and /downloads UI."
+    ],
+    "links": {
+      "firefox": "https://addons.mozilla.org/firefox/addon/getlifeundo/",
+      "github": "https://github.com/LifeUndo/LifeUndo/releases/tag/desktop-0.6.1.1-ui-gold3"
+    }
+  },
+  {
+    "version": "1.0.0+10 (rev5a)",
+    "platform": "Android",
+    "publishedAt": "2025-11-05T00:00:00Z",
+    "items": [
+      "Android APK release (rev5a).",
+      "Tabs capture: brand icons (incl. DuckDuckGo), list 8+2.",
+      "Removed Open/Install and 'Special' section; updated descriptions.",
+      "EN localization and hints."
+    ],
+    "links": {
+      "apk": "https://github.com/LifeUndo/LifeUndo/releases/tag/v1.0.0-10-rev5a",
+      "rustore": "https://www.rustore.ru/catalog/app/com.getlifeundo.lifeundo_app"
+    }
+  }
+]

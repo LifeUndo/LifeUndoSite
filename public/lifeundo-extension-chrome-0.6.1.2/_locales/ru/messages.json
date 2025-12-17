@@ -1,0 +1,120 @@
+{
+  "extensionName": {
+    "message": "GetLifeUndo",
+    "description": "Название расширения"
+  },
+  "extensionDescription": {
+    "message": "Ctrl+Z для жизни в интернете. Возврат текста форм, буфера, вкладок — локально.",
+    "description": "Описание расширения"
+  },
+  "app_name": {
+    "message": "GetLifeUndo",
+    "description": "Название приложения"
+  },
+  "free_version": {
+    "message": "Бесплатная версия",
+    "description": "Метка бесплатной версии"
+  },
+  "whats_new": {
+    "message": "Что нового",
+    "description": "Кнопка что нового"
+  },
+  "upgrade_title": {
+    "message": "Обновить до Pro",
+    "description": "Заголовок обновления"
+  },
+  "upgrade_cta": {
+    "message": "Купить Pro",
+    "description": "CTA обновления"
+  },
+  "website": {
+    "message": "Сайт",
+    "description": "Ссылка на сайт"
+  },
+  "privacy": {
+    "message": "Приватность",
+    "description": "Ссылка на приватность"
+  },
+  "support": {
+    "message": "Поддержка",
+    "description": "Ссылка на поддержку"
+  },
+  "license": {
+    "message": "Лицензия",
+    "description": "Ссылка на лицензию"
+  },
+  "recent_inputs": {
+    "message": "Недавние вводы текста",
+    "description": "Метка недавних вводов"
+  },
+  "recent_tabs": {
+    "message": "Недавно закрытые вкладки",
+    "description": "Метка недавних вкладок"
+  },
+  "clipboard": {
+    "message": "История буфера",
+    "description": "Метка буфера"
+  },
+  "popupTitle": {
+    "message": "GetLifeUndo",
+    "description": "Заголовок попапа"
+  },
+  "undoButton": {
+    "message": "Отменить",
+    "description": "Текст кнопки отмены"
+  },
+  "settingsButton": {
+    "message": "Настройки",
+    "description": "Текст кнопки настроек"
+  },
+  "licenseButton": {
+    "message": "Лицензия",
+    "description": "Текст кнопки лицензии"
+  },
+  "supportButton": {
+    "message": "Поддержка",
+    "description": "Текст кнопки поддержки"
+  },
+  "trialStatus": {
+    "message": "Пробный период: осталось $DAYS$ дней",
+    "description": "Сообщение о пробном периоде",
+    "placeholders": {
+      "days": {
+        "content": "$1",
+        "example": "7"
+      }
+    }
+  },
+  "proStatus": {
+    "message": "Pro Лицензия Активна",
+    "description": "Статус Pro лицензии"
+  },
+  "freeStatus": {
+    "message": "Бесплатная Версия",
+    "description": "Статус бесплатной версии"
+  },
+  "licenseActivated": {
+    "message": "Лицензия успешно активирована!",
+    "description": "Сообщение об успешной активации лицензии"
+  },
+  "invalidLicense": {
+    "message": "Неверный формат ключа лицензии",
+    "description": "Сообщение об ошибке неверной лицензии"
+  },
+  "nothingToUndo": {
+    "message": "Нечего отменять",
+    "description": "Нет элементов для отмены"
+  },
+  "textRestored": {
+    "message": "Текст восстановлен",
+    "description": "Успешное восстановление текста"
+  },
+  "tabRestored": {
+    "message": "Вкладка восстановлена",
+    "description": "Успешное восстановление вкладки"
+  },
+  "clipboardRestored": {
+    "message": "Буфер восстановлен",
+    "description": "Успешное восстановление буфера"
+  }
+}

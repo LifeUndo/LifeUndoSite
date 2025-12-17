@@ -1,0 +1,1304 @@
+﻿// Р“Р»Р°РІРЅР°СЏ СЃС‚СЂР°РЅРёС†Р° РїРѕРїР°РїР° 1:1 СЃ Windows GOLD (РіРµСЂРѕР№ + "Р§С‚Рѕ СѓРјРµРµС‚" + С„СѓС‚РµСЂ)
+
+const api = window.browser || window.chrome;
+
+const $ = (id) => document.getElementById(id);
+
+let currentLang = 'ru';
+
+// СЃРѕСЃС‚РѕСЏРЅРёРµ С‚СЂРёР°Р»Р° / РїР»Р°РЅР°: { mode: 'trial'|'team', days:number, hours:number }
+let trialState = null;
+
+function renderTrialCapsule() {
+  const el = $('ppTrial');
+  if (!el) return;
+
+  if (!trialState) {
+    el.textContent = currentLang === 'ru' ? 'РўР РРђР›' : 'TRIAL';
+    return;
+  }
+
+  if (trialState.mode === 'team') {
+    el.textContent = 'TEAM';
+    return;
+  }
+
+  const d = Math.max(0, trialState.days || 0);
+  const h = Math.max(0, trialState.hours || 0);
+  if (currentLang === 'ru') {
+    el.textContent = `РўР РРђР› ${d}Рґ ${h}С‡`;
+  } else {
+    el.textContent = `TRIAL ${d}d ${h}h`;
+  }
+}
+
+function applyLang() {
+  const ru = currentLang === 'ru';
+
+  // РєРЅРѕРїРєРё СЏР·С‹РєР°
+  $('ppLangRu').classList.toggle('active', ru);
+  $('ppLangEn').classList.toggle('active', !ru);
+
+  const hero = document.getElementById('heroContainer');
+  if (!hero) return;
+
+  if (ru) {
+    hero.innerHTML = `
+      <div class="hero-title">РџРѕС‚РµСЂСЏР»Рё С‚РµРєСЃС‚? Р—Р°РєСЂС‹Р»Рё РІРєР»Р°РґРєСѓ? Ctrl+Z РІРµСЂРЅС‘С‚ РІСЃС‘ РѕР±СЂР°С‚РЅРѕ.</div>
+      <div class="hero-sub">Р’РѕСЃСЃС‚Р°РЅР°РІР»РёРІР°Р№С‚Рµ С„РѕСЂРјС‹, РІРєР»Р°РґРєРё Рё Р±СѓС„РµСЂ РѕР±РјРµРЅР°. 100% Р»РѕРєР°Р»СЊРЅРѕ, Р±РµР· РѕР±Р»Р°РєР° Рё СЃР»РµР¶РєРё.</div>
+
+      <section class="card">
+        <div class="card-header">Р§С‚Рѕ СѓРјРµРµС‚:</div>
+        <ul class="card-list">
+          <li>РСЃС‚РѕСЂРёСЏ РІРІРѕРґР° РІ С„РѕСЂРјР°С…. Р•СЃР»Рё СЃС‚СЂР°РЅРёС†Р° РїРµСЂРµР·Р°РіСЂСѓР·РёР»Р°СЃСЊ РёР»Рё РІРєР»Р°РґРєР° Р·Р°РєСЂС‹Р»Р°СЃСЊ, РІС‹ РІРѕР·РІСЂР°С‰Р°РµС‚Рµ РїРѕСЃР»РµРґРЅРёР№ РІРІРµРґС‘РЅРЅС‹Р№ С‚РµРєСЃС‚ Рё РїСЂРѕРґРѕР»Р¶Р°РµС‚Рµ СЃ С‚РѕРіРѕ Р¶Рµ РјРµСЃС‚Р°.</li>
+          <li>РСЃС‚РѕСЂРёСЏ Р±СѓС„РµСЂР° РѕР±РјРµРЅР°. РҐСЂРѕРЅРѕР»РѕРіРёСЏ СЃРєРѕРїРёСЂРѕРІР°РЅРЅС‹С… С„СЂР°РіРјРµРЅС‚РѕРІ РїРѕР·РІРѕР»СЏРµС‚ РІСЃС‚Р°РІРёС‚СЊ Р»СЋР±РѕР№ РїСЂРµРґС‹РґСѓС‰РёР№ СЌР»РµРјРµРЅС‚ Р±РµР· РїРѕРІС‚РѕСЂРЅРѕРіРѕ РїРѕРёСЃРєР°.</li>
+          <li>РќРµРґР°РІРЅРёРµ РІРєР»Р°РґРєРё. Р‘С‹СЃС‚СЂС‹Р№ РґРѕСЃС‚СѓРї Рє РЅРµРґР°РІРЅРѕ Р·Р°РєСЂС‹С‚С‹Рј СЃС‚СЂР°РЅРёС†Р°Рј Рё РїРµСЂРµС…РѕРґ РѕР±СЂР°С‚РЅРѕ РІ РѕРґРёРЅ С‚Р°Рї.</li>
+          <li>Р‘С‹СЃС‚СЂС‹Рµ СЃРєСЂРёРЅС€РѕС‚С‹ СЃ РїСЂРµРІСЊСЋ. Р”РµР»Р°Р№С‚Рµ СЃРЅРёРјРєРё СЌРєСЂР°РЅР° Рё РјРіРЅРѕРІРµРЅРЅРѕ РІРѕР·РІСЂР°С‰Р°Р№С‚РµСЃСЊ Рє СЂР°Р±РѕС‚Рµ; РёР·РѕР±СЂР°Р¶РµРЅРёСЏ СЃРѕС…СЂР°РЅСЏСЋС‚СЃСЏ Р»РѕРєР°Р»СЊРЅРѕ.</li>
+          <li>Р›РѕРєР°Р»СЊРЅРѕРµ С…СЂР°РЅРµРЅРёРµ. Р’СЃРµ РґР°РЅРЅС‹Рµ РЅР°С…РѕРґСЏС‚СЃСЏ С‚РѕР»СЊРєРѕ РЅР° РІР°С€РµРј СѓСЃС‚СЂРѕР№СЃС‚РІРµ Рё СѓРґР°Р»СЏСЋС‚СЃСЏ РІРјРµСЃС‚Рµ СЃ РїСЂРёР»РѕР¶РµРЅРёРµРј.</li>
+          <li>Р‘РµР· Р°РєРєР°СѓРЅС‚РѕРІ Рё СЂРµРіРёСЃС‚СЂР°С†РёРё. РЈСЃС‚Р°РЅРѕРІРёР»Рё вЂ” Рё РїРѕР»СЊР·СѓРµС‚РµСЃСЊ.</li>
+          <li>Р‘РµР· РёРЅС‚РµСЂРЅРµС‚Р°. РћСЃРЅРѕРІРЅС‹Рµ С„СѓРЅРєС†РёРё СЂР°Р±РѕС‚Р°СЋС‚ РѕС„Р»Р°Р№РЅ; РїСЂРёР»РѕР¶РµРЅРёРµ РЅРµ РѕС‚РїСЂР°РІР»СЏРµС‚ РёРЅС„РѕСЂРјР°С†РёСЋ РЅР° РІРЅРµС€РЅРёРµ СЃРµСЂРІРµСЂР°.</li>
+          <li>Р‘РµР· СЂРµРєР»Р°РјС‹ Рё С‚СЂРµРєРёРЅРіР°. РќРµС‚ СЂРµРєР»Р°РјРЅС‹С… SDK, Р°РЅР°Р»РёС‚РёРєРё Рё СЃРєСЂС‹С‚С‹С… СЃР±РѕСЂРѕРІ РґР°РЅРЅС‹С….</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <div class="card-header">Р—Р°С‡РµРј СЌС‚Рѕ РЅСѓР¶РЅРѕ:</div>
+        <ul class="card-list">
+          <li>РџРѕРґСЃС‚СЂР°С…РѕРІРєР° РїСЂРё РґР»РёРЅРЅС‹С… С„РѕСЂРјР°С…, РєРѕРјРјРµРЅС‚Р°СЂРёСЏС…, СЃРѕРѕР±С‰РµРЅРёСЏС… Рё Р·Р°СЏРІРєР°С… вЂ” РµСЃР»Рё СЃС‚СЂР°РЅРёС†Р° В«СѓРїР°Р»Р°В» РёР»Рё В«РІС‹РєРёРЅСѓР»Р°В», С‚РµРєСЃС‚ РЅРµ РїСЂРѕРїР°РґС‘С‚.</li>
+          <li>РЈСЃРєРѕСЂРµРЅРёРµ РїРѕРІСЃРµРґРЅРµРІРЅРѕР№ СЂР°Р±РѕС‚С‹: СѓРґРѕР±РЅР°СЏ РёСЃС‚РѕСЂРёСЏ Р±СѓС„РµСЂР° РѕР±РјРµРЅР° Рё Р±С‹СЃС‚СЂС‹Рµ СЃРєСЂРёРЅС€РѕС‚С‹ СЌРєРѕРЅРѕРјСЏС‚ РІСЂРµРјСЏ.</li>
+          <li>РџСЂРёРІР°С‚РЅРѕСЃС‚СЊ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ: РёРЅС„РѕСЂРјР°С†РёСЏ РЅРµ РїРѕРєРёРґР°РµС‚ РІР°С€Рµ СѓСЃС‚СЂРѕР№СЃС‚РІРѕ.</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <div class="card-header">РџСЂРёРЅС†РёРїС‹ РїСЂРёРІР°С‚РЅРѕСЃС‚Рё:</div>
+        <ul class="card-list">
+          <li>РџСЂРёР»РѕР¶РµРЅРёРµ РЅРµ Р·Р°РїСЂР°С€РёРІР°РµС‚ Р»РёС€РЅРёС… СЂР°Р·СЂРµС€РµРЅРёР№ Рё РЅРµ РёСЃРїРѕР»СЊР·СѓРµС‚ СЃС‚РѕСЂРѕРЅРЅРёРµ С‚СЂРµРєРµСЂС‹.</li>
+          <li>Р”Р°РЅРЅС‹Рµ РЅРµ РїРµСЂРµРґР°СЋС‚СЃСЏ РЅР° СЃРµСЂРІРµСЂР° СЂР°Р·СЂР°Р±РѕС‚С‡РёРєР° РёР»Рё С‚СЂРµС‚СЊРёС… Р»РёС†.</li>
+          <li>РџСЂРё СѓРґР°Р»РµРЅРёРё РїСЂРёР»РѕР¶РµРЅРёСЏ РІСЃСЏ Р»РѕРєР°Р»СЊРЅР°СЏ РёСЃС‚РѕСЂРёСЏ РїРѕР»РЅРѕСЃС‚СЊСЋ РѕС‡РёС‰Р°РµС‚СЃСЏ.</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <div class="card-header">РџСЂРёРјРµС‡Р°РЅРёСЏ:</div>
+        <ul class="card-list">
+          <li>РџСЂРёР»РѕР¶РµРЅРёРµ РЅРµ С‚СЂРµР±СѓРµС‚ СѓС‡С‘С‚РЅРѕР№ Р·Р°РїРёСЃРё Рё СЂР°Р±РѕС‚Р°РµС‚ Р»РѕРєР°Р»СЊРЅРѕ.</li>
+          <li>РЎРїРёСЃРѕРє РІРѕР·РјРѕР¶РЅРѕСЃС‚РµР№ Р±СѓРґРµС‚ СЂР°СЃС€РёСЂСЏС‚СЊСЃСЏ; Р°РєС†РµРЅС‚ вЂ” РЅР° РЅР°РґС‘Р¶РЅРѕСЃС‚СЊ, РїСЂРёРІР°С‚РЅРѕСЃС‚СЊ Рё СѓРґРѕР±СЃС‚РІРѕ.</li>
+        </ul>
+        <div class="card-list" style="list-style:none;padding-left:0;margin-top:6px;font-size:12px;color:#cbd5f5;">
+          Р’ РїСЂРёР»РѕР¶РµРЅРёРё РµСЃС‚СЊ РїРѕРґРїРёСЃРєР°.
+        </div>
+      </section>
+    `;
+
+    $('ftSite').textContent = 'РЎР°Р№С‚';
+    $('ftGitHub').textContent = 'GitHub';
+    $('ftPrivacy').textContent = 'РџСЂРёРІР°С‚РЅРѕСЃС‚СЊ';
+    $('ftOffer').textContent = 'РћС„РµСЂС‚Р°';
+  } else {
+    hero.innerHTML = `
+      <div class="hero-title">Lost text? Closed a tab? Ctrl+Z brings it back.</div>
+      <div class="hero-sub">Restore forms, tabs, and clipboard. 100% local вЂ” no cloud, no tracking.</div>
+
+      <section class="card">
+        <div class="card-header">What it does:</div>
+        <ul class="card-list">
+          <li>Form input history. If a page reloads or a tab is closed, you restore the last entered text and continue from the same place.</li>
+          <li>Clipboard history. A timeline of copied fragments lets you paste any previous item without reвЂ‘searching.</li>
+          <li>Recent tabs. Quick access to recently closed pages and oneвЂ‘tap return.</li>
+          <li>Quick screenshots with preview. Take captures and jump back instantly; images are stored locally.</li>
+          <li>Local storage. All data stays on your device and is removed together with the app.</li>
+          <li>No accounts or registration. Install вЂ” and use.</li>
+          <li>No internet required. Core features work offline; the app does not send information to external servers.</li>
+          <li>No ads or tracking. No ad SDKs, analytics, or hidden data collection.</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <div class="card-header">Why it matters:</div>
+        <ul class="card-list">
+          <li>Safety net for long forms, comments, messages, and applications вЂ” if a page "crashes" or "kicks you out", your text wonвЂ™t be lost.</li>
+          <li>Faster everyday work: convenient clipboard history and quick screenshots save time.</li>
+          <li>Privacy by default: your information never leaves the device.</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <div class="card-header">Privacy principles:</div>
+        <ul class="card-list">
+          <li>The app requests no unnecessary permissions and uses no thirdвЂ‘party trackers.</li>
+          <li>Data is not transferred to the developerвЂ™s servers or to any third parties.</li>
+          <li>When the app is removed, all local history is fully erased.</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <div class="card-header">Notes:</div>
+        <ul class="card-list">
+          <li>The app does not require an account and works locally.</li>
+          <li>The feature list will grow; the focus is reliability, privacy and convenience.</li>
+        </ul>
+        <div class="card-list" style="list-style:none;padding-left:0;margin-top:6px;font-size:12px;color:#cbd5f5;">
+          The app includes a subscription.
+        </div>
+      </section>
+    `;
+
+    $('ftSite').textContent = 'Website';
+    $('ftGitHub').textContent = 'GitHub';
+    $('ftPrivacy').textContent = 'Privacy';
+    $('ftOffer').textContent = 'Offer';
+  }
+
+  // РєР°РїСЃСѓР»С‹ РІРµСЂСЃРёРё/С‚СЂРёР°Р»Р°
+  renderTrialCapsule();
+
+  // РќР°СЃС‚СЂРѕР№РєРё: Р·Р°РіРѕР»РѕРІРѕРє РјРµРЅСЋ Рё СЂР°Р·РґРµР»РѕРІ
+  const stMenuTitle = $('stMenuTitle');
+  if (stMenuTitle) stMenuTitle.textContent = ru ? 'РњРµРЅСЋ' : 'Menu';
+
+  // РїРѕРґРїРёСЃРё РєРЅРѕРїРѕРє РІРєР»Р°РґРѕРє РЅР°СЃС‚СЂРѕРµРє
+  const tabGeneral = $('stTabGeneral');
+  const tabSub = $('stTabSub');
+  const tabApps = $('stTabApps');
+  const tabAbout = $('stTabAbout');
+  const tabFaq = $('stTabFaq');
+  const tabActivity = $('stTabActivity');
+  const tabDevices = $('stTabDevices');
+  const tabTeam = $('stTabTeam');
+
+  if (tabGeneral) tabGeneral.textContent = ru ? 'РћР±С‰РµРµ' : 'General';
+  if (tabSub) tabSub.textContent = ru ? 'РџРѕРґРїРёСЃРєР°' : 'Subscription';
+  if (tabApps) tabApps.textContent = ru ? 'РџСЂРёР»РѕР¶РµРЅРёСЏ' : 'Apps';
+  if (tabAbout) tabAbout.textContent = ru ? 'Рћ РЅР°СЃ' : 'About';
+  if (tabFaq) tabFaq.textContent = 'FAQ';
+  if (tabActivity) tabActivity.textContent = ru ? 'Р›РµРЅС‚Р°' : 'Timeline';
+  if (tabDevices) tabDevices.textContent = ru ? 'РЈСЃС‚СЂРѕР№СЃС‚РІР°' : 'Devices';
+  if (tabTeam) tabTeam.textContent = 'TEAM';
+
+  const stPanelGeneral = $('stPanelGeneral');
+  if (stPanelGeneral) {
+    const title = stPanelGeneral.querySelector('.settings-section-title');
+    const sub = stPanelGeneral.querySelector('.settings-section-sub');
+    const langTitle = stPanelGeneral.querySelector('.stg-card-title');
+    const emailTitle = stPanelGeneral.querySelectorAll('.stg-card-title')[1];
+    const emailNote = stPanelGeneral.querySelector('.stg-email-note');
+    const emailBtn = $('stGenEmailSave');
+    const emailInput = $('stGenEmail');
+
+    if (title) title.textContent = ru ? 'РћР±С‰РёРµ РЅР°СЃС‚СЂРѕР№РєРё' : 'General settings';
+    if (sub)
+      sub.textContent = ru
+        ? 'РЇР·С‹Рє РёРЅС‚РµСЂС„РµР№СЃР°, РѕС‚РѕР±СЂР°Р¶РµРЅРёРµ СЃРїРёСЃРєР° РІРЅСѓС‚СЂРё РѕРєРЅР° Рё Р±Р°Р·РѕРІС‹Рµ СЂРµР¶РёРјС‹ СЂР°Р±РѕС‚С‹.'
+        : 'Interface language, in-window list view and basic modes.';
+    if (langTitle) langTitle.textContent = ru ? 'РЇР·С‹Рє' : 'Language';
+    if (emailTitle) emailTitle.textContent = ru ? 'Email РґР»СЏ Р°РєРєР°СѓРЅС‚Р°' : 'Account email';
+    if (emailNote)
+      emailNote.textContent = ru
+        ? 'РСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РґР»СЏ С‚СЂРёР°Р»Р°, РїРѕРґРїРёСЃРєРё Рё РїСЂРёРІСЏР·РєРё СѓСЃС‚СЂРѕР№СЃС‚РІ. РЈРєР°Р¶РёС‚Рµ СЂР°Р±РѕС‡РёР№ Р°РґСЂРµСЃ. Р’ Р±СЂР°СѓР·РµСЂРЅРѕРј СЂР°СЃС€РёСЂРµРЅРёРё email СЃРѕС…СЂР°РЅСЏРµС‚СЃСЏ Р»РѕРєР°Р»СЊРЅРѕ Рё Р±СѓРґРµС‚ РёСЃРїРѕР»СЊР·РѕРІР°РЅ РґРµСЃРєС‚РѕРївЂ‘РєР»РёРµРЅС‚РѕРј.'
+        : 'Used for trial, subscription and device linking. Provide a work address. In the browser extension the email is stored locally and will be used by the desktop client later.';
+    if (emailBtn) emailBtn.textContent = ru ? 'РћС‚РїСЂР°РІРёС‚СЊ' : 'Send';
+    if (emailInput)
+      emailInput.placeholder = ru ? 'you@example.com' : 'you@example.com';
+
+    // РїРѕРґРїРёСЃРё РїРµСЂРµРєР»СЋС‡Р°С‚РµР»РµР№ РІ РћР±С‰РёС… (showHere / shots / video / eventMode)
+    const rowShowHere = $('stGenShowHere')?.closest('.stg-row');
+    const rowShots = $('stGenShots')?.closest('.stg-row');
+    const rowVideo = $('stGenVideo')?.closest('.stg-row');
+    const rowEvent = $('stGenEvent')?.closest('.stg-row');
+
+    function setLabel(row, textRu, textEn, titleRu, titleEn) {
+      if (!row) return;
+      const lbl = row.querySelector('.stg-row-label');
+      const hint = row.querySelector('.stg-hint');
+      if (lbl) {
+        const txt = ru ? textRu : textEn;
+        // РїРµСЂРІС‹Р№ С‚РµРєСЃС‚РѕРІС‹Р№ СѓР·РµР» РІРЅСѓС‚СЂРё label вЂ” СЃР°РјР° РЅР°РґРїРёСЃСЊ, РѕСЃС‚Р°РІР»СЏРµРј span СЃ "!" РєР°Рє РµСЃС‚СЊ
+        if (lbl.firstChild) {
+          if (lbl.firstChild.nodeType === Node.TEXT_NODE) {
+            lbl.firstChild.textContent = txt + ' ';
+          } else {
+            lbl.insertBefore(document.createTextNode(txt + ' '), lbl.firstChild);
+          }
+        } else {
+          lbl.appendChild(document.createTextNode(txt + ' '));
+        }
+      }
+      if (hint)
+        hint.setAttribute('title', ru ? titleRu : titleEn);
+    }
+
+    setLabel(
+      rowShowHere,
+      'РџРѕРєР°Р·С‹РІР°С‚СЊ СЃРїРёСЃРѕРє Р·РґРµСЃСЊ',
+      'Show list here',
+      'РџРѕРєР°Р·С‹РІР°С‚СЊ СЃРїРёСЃРѕРє РІРЅСѓС‚СЂРё РѕРєРЅР° РїСЂРёР»РѕР¶РµРЅРёСЏ',
+      'Show the list inside the app window'
+    );
+    setLabel(
+      rowShots,
+      'РЎРєСЂРёРЅС€РѕС‚С‹',
+      'Screenshots',
+      'РђРІС‚РѕРјР°С‚РёС‡РµСЃРєРё СЃРѕС…СЂР°РЅСЏС‚СЊ СЃРєСЂРёРЅС€РѕС‚С‹',
+      'Automatically capture screenshots'
+    );
+    setLabel(
+      rowVideo,
+      'Р’РёРґРµРѕ',
+      'Video',
+      'Р—Р°РїРёСЃСЊ РєРѕСЂРѕС‚РєРѕРіРѕ РІРёРґРµРѕ (РїРѕР·Р¶Рµ)',
+      'Capture short videos (later)'
+    );
+    setLabel(
+      rowEvent,
+      'Р РµР¶РёРј СЃРѕР±С‹С‚РёР№',
+      'Event mode',
+      'Р­РєСЃРїРµСЂРёРјРµРЅС‚Р°Р»СЊРЅС‹Р№ СЂРµР¶РёРј, С„РёРєСЃРёСЂСѓРµС‚ С‚РѕР»СЊРєРѕ РІР°Р¶РЅС‹Рµ СЃРѕР±С‹С‚РёСЏ',
+      'Experimental mode, captures only important events'
+    );
+
+    // РџРѕРґРїРёСЃРєР° / Subscription
+    const stPanelSub = $('stPanelSubscription');
+    if (stPanelSub) {
+      const subTitle = $('subTitle');
+      const subSub = $('subSub');
+      const subStatusLabel = $('subStatusLabel');
+      const subStatusValue = $('subStatusValue');
+      const subProTitle = $('subProTitle');
+      const subProPrice = $('subProPrice');
+      const subVipTitle = $('subVipTitle');
+      const subVipPrice = $('subVipPrice');
+      const subTeamTitle = $('subTeamTitle');
+      const subTeamPrice = $('subTeamPrice');
+      const btnSubPro = $('btnSubPro');
+      const btnSubVip = $('btnSubVip');
+      const btnSubTeam = $('btnSubTeam');
+
+      if (subTitle) subTitle.textContent = ru ? 'РџРѕРґРїРёСЃРєР°' : 'Subscription';
+      if (subSub)
+        subSub.textContent = ru
+          ? 'РўР°СЂРёС„С‹ PRO, VIP Рё TEAM 5 РґР»СЏ РїРµСЂСЃРѕРЅР°Р»СЊРЅРѕРіРѕ Рё РєРѕРјР°РЅРґРЅРѕРіРѕ РёСЃРїРѕР»СЊР·РѕРІР°РЅРёСЏ.'
+          : 'PRO, VIP and TEAM 5 plans for personal and team use.';
+
+      if (subStatusLabel) subStatusLabel.textContent = ru ? 'РЎС‚Р°С‚СѓСЃ' : 'Status';
+      if (subStatusValue) subStatusValue.textContent = ru ? 'РќРµ Р°РєС‚РёРІРЅР°' : 'Not activated';
+
+      if (subProTitle)
+        subProTitle.textContent = ru
+          ? 'PRO (РјРµСЃСЏС†, РґР»СЏ РѕРґРЅРѕРіРѕ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ)'
+          : 'PRO (monthly, single user)';
+      if (subProPrice) subProPrice.textContent = ru ? 'РµР¶РµРјРµСЃСЏС‡РЅРѕ' : 'per month';
+      if (btnSubPro)
+        btnSubPro.textContent = ru ? 'РћРїР»Р°С‚РёС‚СЊ вЂ” в‚Ѕ599' : 'Pay вЂ” в‚Ѕ599';
+
+      if (subVipTitle)
+        subVipTitle.textContent = ru
+          ? 'VIP (РїРѕР¶РёР·РЅРµРЅРЅРѕ, РґР»СЏ РѕРґРЅРѕРіРѕ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ)'
+          : 'VIP (lifetime, single user)';
+      if (subVipPrice) subVipPrice.textContent = ru ? 'РµРґРёРЅРѕРІСЂРµРјРµРЅРЅРѕ' : 'one-time';
+      if (btnSubVip)
+        btnSubVip.textContent = ru ? 'РћРїР»Р°С‚РёС‚СЊ вЂ” в‚Ѕ9990' : 'Pay вЂ” в‚Ѕ9990';
+
+      if (subTeamTitle)
+        subTeamTitle.textContent = ru
+          ? 'TEAM 5 (РґР»СЏ РєРѕРјР°РЅРґ Рё РѕСЂРіР°РЅРёР·Р°С†РёР№)'
+          : 'TEAM 5 (teams & organisations)';
+      if (subTeamPrice) subTeamPrice.textContent = ru ? '5 РјРµСЃС‚ / РјРµСЃСЏС†' : '5 seats / month';
+      if (btnSubTeam)
+        btnSubTeam.textContent = ru ? 'РћРїР»Р°С‚РёС‚СЊ вЂ” в‚Ѕ2990' : 'Pay вЂ” в‚Ѕ2990';
+    }
+
+    // Apps
+    const stPanelApps = $('stPanelApps');
+    if (stPanelApps) {
+      const appsTitle = $('appsTitle');
+      const appsSub = $('appsSub');
+      const appsDesktopTitle = $('appsDesktopTitle');
+      const appsDesktopWin = $('appsDesktopWin');
+      const appsDesktopMac = $('appsDesktopMac');
+      const appsDesktopQrText = $('appsDesktopQrText');
+      const appsDesktopUrl = $('appsDesktopUrl');
+      const appsAndroidTitle = $('appsAndroidTitle');
+      const appsAndroidRustore = $('appsAndroidRustore');
+      const appsAndroidRustoreNote = $('appsAndroidRustoreNote');
+      const appsAndroidGithub = $('appsAndroidGithub');
+      const appsAndroidGithubNote = $('appsAndroidGithubNote');
+      const appsAppleTitle = $('appsAppleTitle');
+      const appsAppleIos = $('appsAppleIos');
+      const appsAppleMac = $('appsAppleMac');
+      const appsBrowserTitle = $('appsBrowserTitle');
+      const appsBrowserChrome = $('appsBrowserChrome');
+      const appsBrowserSafari = $('appsBrowserSafari');
+      const appsBrowserEdge = $('appsBrowserEdge');
+      const appsTabletTitle = $('appsTabletTitle');
+      const appsTabletText = $('appsTabletText');
+      const appsDevicesNoteTitle = $('appsDevicesNoteTitle');
+      const appsDevicesNoteText = $('appsDevicesNoteText');
+      const btnAppsDesktopShare = $('btnAppsDesktopShare');
+      const btnAppsRustore = $('btnAppsRustore');
+      const btnAppsApk = $('btnAppsApk');
+
+      if (appsTitle) appsTitle.textContent = ru ? 'РџСЂРёР»РѕР¶РµРЅРёСЏ GetLifeUndo' : 'GetLifeUndo apps';
+      if (appsSub)
+        appsSub.textContent = ru
+          ? 'Р”РµСЃРєС‚РѕРїРЅС‹Р№ РєР»РёРµРЅС‚, AndroidвЂ‘РїСЂРёР»РѕР¶РµРЅРёРµ Рё РґСЂСѓРіРёРµ РєР»РёРµРЅС‚С‹ Mesh.'
+          : 'Desktop app, Android client and other Mesh clients.';
+      if (appsDesktopTitle) appsDesktopTitle.textContent = 'Desktop';
+      if (appsDesktopWin)
+        appsDesktopWin.textContent = ru
+          ? 'Windows вЂ” Mesh 0.6.1.1 (СЌС‚Р° СЃР±РѕСЂРєР°)'
+          : 'Windows вЂ” Mesh 0.6.1.1 (this build)';
+      if (appsDesktopMac)
+        appsDesktopMac.textContent = ru ? 'macOS вЂ” РІ СЂР°Р·СЂР°Р±РѕС‚РєРµ' : 'macOS вЂ” in development';
+      if (appsDesktopQrText)
+        appsDesktopQrText.textContent = ru
+          ? 'РЎРєР°РЅРёСЂСѓР№С‚Рµ QR, С‡С‚РѕР±С‹ РѕС‚РєСЂС‹С‚СЊ СЃС‚СЂР°РЅРёС†Сѓ Р·Р°РіСЂСѓР·РѕРє GetLifeUndo.'
+          : 'Scan the QR to open the GetLifeUndo downloads page.';
+      if (appsDesktopUrl)
+        appsDesktopUrl.textContent = 'https://getlifeundo.com/ru/downloads';
+      if (btnAppsDesktopShare)
+        btnAppsDesktopShare.textContent = ru ? 'РџРѕРґРµР»РёС‚СЊСЃСЏ СЃСЃС‹Р»РєРѕР№' : 'Share link';
+
+      if (appsAndroidTitle) appsAndroidTitle.textContent = 'Android';
+      if (appsAndroidRustore) appsAndroidRustore.textContent = 'RuStore';
+      if (appsAndroidRustoreNote)
+        appsAndroidRustoreNote.textContent = ru ? 'Р”РѕСЃС‚СѓРїРЅРѕ РІ RuStore.' : 'Available in RuStore.';
+      if (appsAndroidGithub) appsAndroidGithub.textContent = 'GitHub';
+      if (appsAndroidGithubNote)
+        appsAndroidGithubNote.textContent = ru
+          ? 'APK (СЂСѓС‡РЅР°СЏ СѓСЃС‚Р°РЅРѕРІРєР°) Рё devвЂ‘СЃР±РѕСЂРєРё.'
+          : 'APK (manual install) and dev builds.';
+      if (btnAppsRustore)
+        btnAppsRustore.textContent = ru ? 'РћС‚РєСЂС‹С‚СЊ RuStore' : 'Open RuStore';
+      if (btnAppsApk)
+        btnAppsApk.textContent = ru ? 'РћС‚РєСЂС‹С‚СЊ GitHub' : 'Open GitHub';
+
+      if (appsAppleTitle) appsAppleTitle.textContent = 'Apple';
+      if (appsAppleIos)
+        appsAppleIos.textContent = ru ? 'iOS вЂ” РІ СЂР°Р·СЂР°Р±РѕС‚РєРµ' : 'iOS вЂ” in development';
+      if (appsAppleMac)
+        appsAppleMac.textContent = ru ? 'macOSвЂ‘РєР»РёРµРЅС‚ вЂ” РІ СЂР°Р·СЂР°Р±РѕС‚РєРµ' : 'macOS client вЂ” in development';
+
+      if (appsBrowserTitle)
+        appsBrowserTitle.textContent = ru ? 'Р‘СЂР°СѓР·РµСЂРЅС‹Рµ СЂР°СЃС€РёСЂРµРЅРёСЏ' : 'Browser extensions';
+      if (appsBrowserChrome)
+        appsBrowserChrome.textContent = ru ? 'Chrome вЂ” РІ СЂР°Р·СЂР°Р±РѕС‚РєРµ' : 'Chrome вЂ” in development';
+      if (appsBrowserSafari)
+        appsBrowserSafari.textContent = ru ? 'Safari вЂ” РІ СЂР°Р·СЂР°Р±РѕС‚РєРµ' : 'Safari вЂ” in development';
+      if (appsBrowserEdge)
+        appsBrowserEdge.textContent = ru ? 'Edge вЂ” РІ СЂР°Р·СЂР°Р±РѕС‚РєРµ' : 'Edge вЂ” in development';
+
+      if (appsTabletTitle) appsTabletTitle.textContent = 'Tablet / iPad';
+      if (appsTabletText)
+        appsTabletText.textContent = ru
+          ? 'РџР»Р°РЅС€РµС‚РЅС‹Рµ РєР»РёРµРЅС‚С‹ вЂ” РІ СЂР°Р·СЂР°Р±РѕС‚РєРµ.'
+          : 'Tablet clients вЂ” in development.';
+
+      if (appsDevicesNoteTitle)
+        appsDevicesNoteTitle.textContent = ru ? 'Р’Р°С€Рё СѓСЃС‚СЂРѕР№СЃС‚РІР°' : 'Your devices';
+      if (appsDevicesNoteText)
+        appsDevicesNoteText.textContent = ru
+          ? 'Р­С‚РѕС‚ desktopвЂ‘РєР»РёРµРЅС‚ СѓР¶Рµ РіРѕС‚РѕРІ. Р Р°Р·РґРµР» В«Р’Р°С€Рё СѓСЃС‚СЂРѕР№СЃС‚РІР°В» РІ РЅР°СЃС‚СЂРѕР№РєР°С… РїРѕРєР°Р·С‹РІР°РµС‚ С‚РµРєСѓС‰РёР№ РџРљ Рё РїРѕР·РІРѕР»РёС‚ РїРѕР·Р¶Рµ РїСЂРёРІСЏР·С‹РІР°С‚СЊ РґСЂСѓРіРёРµ СѓСЃС‚СЂРѕР№СЃС‚РІР°.'
+          : 'The desktop client is ready. The "Your devices" section in Settings shows this PC and will later let you link other devices.';
+    }
+
+    // TEAM
+    const stPanelTeam = $('stPanelTeam');
+    if (stPanelTeam) {
+      const teamTitle = $('teamTitle');
+      const teamSub2 = $('teamSub');
+      const teamIntroTitle = $('teamIntroTitle');
+      const teamIntroTextMain = $('teamIntroTextMain');
+      const teamIntroTextPilot = $('teamIntroTextPilot');
+      const teamHowTitle = $('teamHowTitle');
+      const teamHowText = $('teamHowText');
+      const teamAdminTitle = $('teamAdminTitle');
+      const teamAdminText = $('teamAdminText');
+      const btnTeamAdmin = $('btnTeamAdmin');
+
+      if (teamTitle) teamTitle.textContent = 'TEAM';
+      if (teamSub2)
+        teamSub2.textContent = ru
+          ? 'TEAM 5 РґР»СЏ РєРѕРјР°РЅРґ Рё РѕСЂРіР°РЅРёР·Р°С†РёР№, СЃР»РѕС‚С‹ СѓСЃС‚СЂРѕР№СЃС‚РІ Рё Р°РґРјРёРЅвЂ‘РїР°РЅРµР»СЊ.'
+          : 'TEAM 5 for teams and organisations, device slots and admin console.';
+
+      if (teamIntroTitle) teamIntroTitle.textContent = 'TEAM / TEAM 5';
+      if (teamIntroTextMain)
+        teamIntroTextMain.textContent = ru
+          ? 'TEAM вЂ” СЌС‚Рѕ РґРѕСЃС‚СѓРї Рє GetLifeUndo РґР»СЏ РєРѕРјР°РЅРґС‹ РёР»Рё РЅРµР±РѕР»СЊС€РѕР№ РѕСЂРіР°РЅРёР·Р°С†РёРё. РўР°СЂРёС„ TEAM 5 СЂР°СЃСЃС‡РёС‚Р°РЅ РЅР° 5 СѓСЃС‚СЂРѕР№СЃС‚РІ (Р»СЋРґРµР№ РёР»Рё СЂР°Р±РѕС‡РёС… СЃС‚Р°РЅС†РёР№) Рё РґР°С‘С‚ Р±РѕРЅСѓСЃ +5% Рє РєР°Р¶РґРѕРјСѓ РїРѕРїРѕР»РЅРµРЅРёСЋ СЃС‡С‘С‚Р° РєРѕРјР°РЅРґС‹.'
+          : 'TEAM is access to GetLifeUndo for a team or small organisation. The TEAM 5 plan is designed for 5 devices (people or workstations) and gives a +5% bonus on every team topвЂ‘up.';
+      if (teamIntroTextPilot)
+        teamIntroTextPilot.textContent = ru
+          ? 'Р”Р»СЏ РїРёР»РѕС‚РЅС‹С… РєРѕРјР°РЅРґ РґРµР№СЃС‚РІСѓРµС‚ РёРЅРґРёРІРёРґСѓР°Р»СЊРЅРѕРµ РїСЂРµРґР»РѕР¶РµРЅРёРµ Рё РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹Рµ Р±РѕРЅСѓСЃС‹ Р·Р° РѕР±СЂР°С‚РЅСѓСЋ СЃРІСЏР·СЊ.'
+          : 'Pilot teams can get individual terms and extra bonuses for feedback.';
+
+      if (teamHowTitle) teamHowTitle.textContent = ru ? 'РљР°Рє РїРѕРґРєР»СЋС‡РёС‚СЊСЃСЏ' : 'How to join';
+      if (teamHowText)
+        teamHowText.textContent = ru
+          ? 'РќР°РїРёС€РёС‚Рµ РЅР° support@getlifeundo.com СЃ С‚РµРјРѕР№ TEAM, СѓРєР°Р¶РёС‚Рµ РЅР°Р·РІР°РЅРёРµ РєРѕРјР°РЅРґС‹/РѕСЂРіР°РЅРёР·Р°С†РёРё, РїСЂРёРјРµСЂРЅРѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ Р»СЋРґРµР№ Рё РЅСѓР¶РЅС‹Р№ РїРµСЂРёРѕРґ. РњС‹ СЃРѕР·РґР°РґРёРј TEAMвЂ‘Р°РєРєР°СѓРЅС‚, РїСЂРёС€Р»С‘Рј РґРѕРіРѕРІРѕСЂ Рё Р°РєС‚РёРІР°С†РёРѕРЅРЅС‹Рµ РєР»СЋС‡Рё.'
+          : 'Email support@getlifeundo.com with subject TEAM, include your team/organisation name, approximate number of people and desired period. We will create a TEAM account, send you an agreement and activation keys.';
+
+      if (teamAdminTitle)
+        teamAdminTitle.textContent = ru ? 'TEAM / Р°РґРјРёРЅвЂ‘РїР°РЅРµР»СЊ' : 'TEAM / admin panel';
+      if (teamAdminText)
+        teamAdminText.textContent = ru
+          ? 'Р’ РґРµСЃРєС‚РѕРїРЅРѕР№ РІРµСЂСЃРёРё РµСЃС‚СЊ СЂР°Р·РґРµР» В«Р’Р°С€Рё СѓСЃС‚СЂРѕР№СЃС‚РІР°В» Рё РєРѕРґС‹ РїСЂРёРІСЏР·РєРё (PIN). Р§РµСЂРµР· РЅРµРіРѕ РјРѕР¶РЅРѕ СЃРІСЏР·Р°С‚СЊ РґРѕ 5 СѓСЃС‚СЂРѕР№СЃС‚РІ РІ СЂР°РјРєР°С… TEAM 5.'
+          : 'In the desktop app the "Your devices" section and pairing PIN codes. It lets you link up to 5 devices within TEAM 5.';
+      if (btnTeamAdmin)
+        btnTeamAdmin.textContent = ru ? 'РћС‚РєСЂС‹С‚СЊ Р°РґРјРёРЅвЂ‘РїР°РЅРµР»СЊ' : 'Open admin console';
+    }
+
+    // Activity / Р›РµРЅС‚Р°
+    const stPanelActivity = $('stPanelActivity');
+    if (stPanelActivity) {
+      const tlTitle = $('tlTitle');
+      const tlSub = $('tlSub');
+      const tlTabsTitle = $('tlTabsTitle');
+      const tlTabsHint = $('tlTabsHint');
+      const tlTabsEmpty = $('tlTabsEmpty');
+      const tlTabsList = $('tlTabsList');
+      const tlShotsTitle = $('tlShotsTitle');
+      const tlShotsText1 = $('tlShotsText1');
+      const tlShotsText2 = $('tlShotsText2');
+      const tlTextTitle = $('tlTextTitle');
+      const tlTextText1 = $('tlTextText1');
+      const tlTextText2 = $('tlTextText2');
+
+      if (tlTitle) tlTitle.textContent = ru ? 'Р›РµРЅС‚Р°' : 'Timeline';
+      if (tlSub)
+        tlSub.textContent = ru
+          ? 'Р‘С‹СЃС‚СЂС‹Р№ РґРѕСЃС‚СѓРї Рє РІРєР»Р°РґРєР°Рј, СЃРєСЂРёРЅС€РѕС‚Р°Рј Рё С‚РµРєСЃС‚Сѓ. Р’ Р±СЂР°СѓР·РµСЂРЅРѕР№ РІРµСЂСЃРёРё Р·РґРµСЃСЊ РѕС‚РѕР±СЂР°Р¶Р°СЋС‚СЃСЏ РЅРµРґР°РІРЅРёРµ РІРєР»Р°РґРєРё СЌС‚РѕРіРѕ Р±СЂР°СѓР·РµСЂР°.'
+          : 'Quick access to tabs, screenshots and text. In the browser this section shows recent tabs from this browser.';
+
+      if (tlTabsTitle) tlTabsTitle.textContent = ru ? 'Р’РєР»Р°РґРєРё' : 'Tabs';
+      if (tlTabsHint)
+        tlTabsHint.textContent = ru
+          ? 'РќРµРґР°РІРЅРёРµ РІРєР»Р°РґРєРё СЌС‚РѕРіРѕ Р±СЂР°СѓР·РµСЂР°. РќР°Р¶РјРёС‚Рµ РЅР° СЃС‚СЂРѕРєСѓ, С‡С‚РѕР±С‹ РѕС‚РєСЂС‹С‚СЊ РІРєР»Р°РґРєСѓ СЃРЅРѕРІР°.'
+          : 'Recent tabs from this browser. Click a row to reopen the tab.';
+      if (tlTabsEmpty)
+        tlTabsEmpty.textContent = ru
+          ? 'РџРѕРєР° РЅРµС‚ РЅРµРґР°РІРЅРёС… Р·Р°РєСЂС‹С‚С‹С… РІРєР»Р°РґРѕРє.'
+          : 'There are no recently closed tabs yet.';
+
+      if (tlShotsTitle) tlShotsTitle.textContent = ru ? 'РЎРєСЂРёРЅС€РѕС‚С‹' : 'Screenshots';
+      if (tlShotsText1)
+        tlShotsText1.textContent = ru
+          ? 'Р”РµСЃРєС‚РѕРїРЅРѕРµ РїСЂРёР»РѕР¶РµРЅРёРµ РѕС‚СЃР»РµР¶РёРІР°РµС‚ РїР°РїРєРё СЃРєСЂРёРЅС€РѕС‚РѕРІ (РР·РѕР±СЂР°Р¶РµРЅРёСЏ/РЎРєСЂРёРЅС€РѕС‚С‹, OneDrive, Dropbox Рё РґСЂ.) Рё РїРѕРєР°Р·С‹РІР°РµС‚ РїРѕСЃР»РµРґРЅРёРµ РєР°РґСЂС‹ РІ СѓРґРѕР±РЅРѕРј СЃРїРёСЃРєРµ.'
+          : 'The desktop app watches screenshot folders (Pictures/Screenshots, OneDrive, Dropbox, etc.) and shows the latest shots in a compact list.';
+      if (tlShotsText2)
+        tlShotsText2.textContent = ru
+          ? 'Р’ Р±СЂР°СѓР·РµСЂРЅРѕРј СЂР°СЃС€РёСЂРµРЅРёРё РјС‹ РЅРµ С‡РёС‚Р°РµРј С„Р°Р№Р»РѕРІСѓСЋ СЃРёСЃС‚РµРјСѓ: Р·РґРµСЃСЊ С‚РѕР»СЊРєРѕ РѕРїРёСЃР°РЅРёРµ РїРѕРІРµРґРµРЅРёСЏ, Р±РµР· РѕС‚РѕР±СЂР°Р¶РµРЅРёСЏ СЃРѕРґРµСЂР¶РёРјРѕРіРѕ.'
+          : 'The browser extension does not read your file system; this section only describes the behaviour without showing actual files.';
+
+      if (tlTextTitle) tlTextTitle.textContent = ru ? 'РўРµРєСЃС‚' : 'Text';
+      if (tlTextText1)
+        tlTextText1.textContent = ru
+          ? 'Р’ РґРµСЃРєС‚РѕРїРµ Р›РµРЅС‚Р° С…СЂР°РЅРёС‚ РёСЃС‚РѕСЂРёСЋ С‚РµРєСЃС‚Р° РёР· Р±СѓС„РµСЂР° РѕР±РјРµРЅР° Рё РїРѕР·РІРѕР»СЏРµС‚ Р±С‹СЃС‚СЂРѕ РІРµСЂРЅСѓС‚СЊСЃСЏ Рє РЅСѓР¶РЅС‹Рј С„СЂР°РіРјРµРЅС‚Р°Рј.'
+          : 'In the desktop app the Timeline keeps a history of clipboard text and lets you quickly jump back to important snippets.';
+      if (tlTextText2)
+        tlTextText2.textContent = ru
+          ? 'Р’ Р±СЂР°СѓР·РµСЂРµ С‚РµРєСЃС‚РѕРІС‹Рµ РґРµР№СЃС‚РІРёСЏ РѕРіСЂР°РЅРёС‡РµРЅС‹ РІРєР»Р°РґРєР°РјРё Рё С„РѕСЂРјР°РјРё, РїРѕСЌС‚РѕРјСѓ Р·РґРµСЃСЊ Р›РµРЅС‚Р° РІС‹СЃС‚СѓРїР°РµС‚ РєР°Рє СЃРїСЂР°РІРѕС‡РЅС‹Р№ СЂР°Р·РґРµР».'
+          : 'In the browser text actions are limited to tabs and forms, so here the Timeline acts as a reference section.';
+    }
+
+    function refreshTimelineTabs() {
+      chrome.sessions.getRecentlyClosed({}, (sessions) => {
+        const tlTabsList = $('tlTabsList');
+        if (tlTabsList) {
+          tlTabsList.innerHTML = '';
+          sessions.forEach((session) => {
+            const tab = document.createElement('div');
+            tab.textContent = session.tab.title;
+            tab.addEventListener('click', () => {
+              chrome.sessions.restore(session.window.id, () => {
+                chrome.tabs.update(session.tab.id, { active: true });
+              });
+            });
+            tlTabsList.appendChild(tab);
+          });
+        }
+      });
+      const devSub = $('devSub');
+      const devThisDeviceTitle = $('devThisDeviceTitle');
+      const devThisDeviceText = $('devThisDeviceText');
+      const devHowLinkTitle = $('devHowLinkTitle');
+      const devHowLinkText1 = $('devHowLinkText1');
+      const devHowLinkText2 = $('devHowLinkText2');
+
+      if (devTitle) devTitle.textContent = ru ? 'Р’Р°С€Рё СѓСЃС‚СЂРѕР№СЃС‚РІР°' : 'Your devices';
+      if (devSub)
+        devSub.textContent = ru
+          ? 'РћР±Р·РѕСЂ СѓСЃС‚СЂРѕР№СЃС‚РІ TEAM Рё Р±Р°Р·РѕРІР°СЏ РёРЅС„РѕСЂРјР°С†РёСЏ РѕР± СЌС‚РѕРј Р±СЂР°СѓР·РµСЂРµ. РџРѕР»РЅР°СЏ СЃРІСЏР·РєР° СѓСЃС‚СЂРѕР№СЃС‚РІ СѓРїСЂР°РІР»СЏРµС‚СЃСЏ С‡РµСЂРµР· РґРµСЃРєС‚РѕРїРЅС‹Р№ РєР»РёРµРЅС‚ Рё Р°РґРјРёРЅвЂ‘РїР°РЅРµР»СЊ.'
+          : 'TEAM devices overview and basic info about this browser. Full device linking is managed via the desktop app and admin console.';
+
+      if (devThisDeviceTitle) devThisDeviceTitle.textContent = ru ? 'Р­С‚Рѕ СѓСЃС‚СЂРѕР№СЃС‚РІРѕ' : 'This device';
+      if (devThisDeviceText)
+        devThisDeviceText.textContent = ru
+          ? 'Р Р°СЃС€РёСЂРµРЅРёРµ Р±СЂР°СѓР·РµСЂР° GetLifeUndo. РўРёРї РєР»РёРµРЅС‚Р°: browserвЂ‘extension. Р”Р»СЏ РїРѕР»РЅРѕС†РµРЅРЅРѕР№ СЂР°Р±РѕС‚С‹ TEAM Рё СЃР»РѕС‚РѕРІ СѓСЃС‚СЂРѕР№СЃС‚РІ РїРѕРґРєР»СЋС‡РёС‚Рµ С…РѕС‚СЏ Р±С‹ РѕРґРёРЅ РґРµСЃРєС‚РѕРїРЅС‹Р№ РєР»РёРµРЅС‚.'
+          : 'GetLifeUndo browser extension. Client type: browserвЂ‘extension. For full TEAM and device slot support connect at least one desktop client.';
+
+      if (devHowLinkTitle)
+        devHowLinkTitle.textContent = ru ? 'РљР°Рє СЃРІСЏР·Р°С‚СЊ СѓСЃС‚СЂРѕР№СЃС‚РІР°' : 'How to link devices';
+      if (devHowLinkText1)
+        devHowLinkText1.textContent = ru
+          ? 'Р’ РґРµСЃРєС‚РѕРїРЅРѕР№ РІРµСЂСЃРёРё РµСЃС‚СЊ СЂР°Р·РґРµР» В«Р’Р°С€Рё СѓСЃС‚СЂРѕР№СЃС‚РІР°В» Рё РєРѕРґС‹ РїСЂРёРІСЏР·РєРё (PIN). Р§РµСЂРµР· РЅРµРіРѕ РјРѕР¶РЅРѕ СЃРІСЏР·Р°С‚СЊ РґРѕ 5 СѓСЃС‚СЂРѕР№СЃС‚РІ РІ СЂР°РјРєР°С… TEAM 5.'
+          : 'The desktop app has a "Your devices" section and pairing PIN codes. It lets you link up to 5 devices within TEAM 5.';
+      if (devHowLinkText2)
+        devHowLinkText2.textContent = ru
+          ? 'Р‘СЂР°СѓР·РµСЂРЅРѕРµ СЂР°СЃС€РёСЂРµРЅРёРµ Р±СѓРґРµС‚ РѕС‚РѕР±СЂР°Р¶Р°С‚СЊСЃСЏ РєР°Рє РµС‰С‘ РѕРґРЅРѕ СѓСЃС‚СЂРѕР№СЃС‚РІРѕ, РµСЃР»Рё РІС‹ РѕС‚РїСЂР°РІРёС‚Рµ РїРёСЃСЊРјРѕ РЅР° legal@getlifeundo.com СЃ СЌС‚РѕРіРѕ Р¶Рµ email, С‡С‚Рѕ Рё РІ РґРµСЃРєС‚РѕРїРµ, Рё Р°РєС‚РёРІРёСЂСѓРµС‚Рµ TEAM.'
+          : 'The browser extension will appear as another device if you email legal@getlifeundo.com from the same address as in the desktop app and activate TEAM.';
+    }
+
+    // About
+    const stPanelAbout2 = $('stPanelAbout');
+    if (stPanelAbout2) {
+      const aboutTitle = $('aboutTitle');
+      const aboutSub2 = $('aboutSub');
+      const aboutSocialTitle = $('aboutSocialTitle');
+      const aboutSocialList = $('aboutSocialList');
+      const aboutStoresTitle = $('aboutStoresTitle');
+      const aboutStoresList = $('aboutStoresList');
+      const aboutActionsTitle = $('aboutActionsTitle');
+      const aboutActionsText = $('aboutActionsText');
+      const btnAboutShare = $('btnAboutShare');
+      const btnAboutRate = $('btnAboutRate');
+
+      if (aboutTitle) aboutTitle.textContent = ru ? 'Рћ LifeUndo' : 'About LifeUndo';
+      if (aboutSub2)
+        aboutSub2.textContent = ru
+          ? 'РЎРѕС†РёР°Р»СЊРЅС‹Рµ СЃРµС‚Рё, СЃСЃС‹Р»РєРё РЅР° РјР°РіР°Р·РёРЅС‹ Рё РїРѕР»РµР·РЅС‹Рµ РґРµР№СЃС‚РІРёСЏ РІРѕРєСЂСѓРі GetLifeUndo.'
+          : 'Social networks, store links and useful actions around GetLifeUndo.';
+
+      if (aboutSocialTitle)
+        aboutSocialTitle.textContent = ru ? 'РЎРѕС†СЃРµС‚Рё Рё РєР°РЅР°Р»С‹' : 'Social media and channels';
+      if (aboutSocialList)
+        aboutSocialList.textContent = ru
+          ? 'Telegram, VK, X, YouTube, Reddit вЂ” РїРѕРґСЂРѕР±РЅС‹Рµ РЅРѕРІРѕСЃС‚Рё Рё СЂР°Р·Р±РѕСЂС‹ РѕР±РЅРѕРІР»РµРЅРёР№.'
+          : 'Telegram, VK, X, YouTube, Reddit вЂ” detailed updates and release breakdowns.';
+
+      if (aboutStoresTitle)
+        aboutStoresTitle.textContent = ru ? 'РњР°РіР°Р·РёРЅС‹ Рё СЂР°СЃС€РёСЂРµРЅРёСЏ' : 'Stores and extensions';
+      if (aboutStoresList)
+        aboutStoresList.textContent = ru
+          ? 'RuStore, Firefox Add-ons, GitHub Рё РґСЂСѓРіРёРµ РїР»РѕС‰Р°РґРєРё, РіРґРµ РїРѕСЏРІР»СЏСЋС‚СЃСЏ РєР»РёРµРЅС‚С‹ LifeUndo.'
+          : 'RuStore, Firefox Add-ons, GitHub and other platforms where LifeUndo clients appear.';
+
+      if (aboutActionsTitle)
+        aboutActionsTitle.textContent = ru ? 'РџРѕРґРµР»РёС‚СЊСЃСЏ Рё РѕС†РµРЅРёС‚СЊ' : 'Share and rate';
+      if (aboutActionsText)
+        aboutActionsText.textContent = ru
+          ? 'РџРѕРґРµР»РёС‚РµСЃСЊ СЃСЃС‹Р»РєРѕР№ РЅР° getlifeundo.com Рё РїСЂРё Р¶РµР»Р°РЅРёРё РѕС†РµРЅРёС‚Рµ РїСЂРёР»РѕР¶РµРЅРёРµ РІ РјР°РіР°Р·РёРЅРµ.'
+          : 'Share a link to getlifeundo.com and rate the app in a store if you wish.';
+
+      if (btnAboutShare)
+        btnAboutShare.textContent = ru ? 'РџРѕРґРµР»РёС‚СЊСЃСЏ' : 'Share';
+      if (btnAboutRate)
+        btnAboutRate.textContent = ru ? 'РћС†РµРЅРёС‚СЊ' : 'Rate';
+    }
+
+    const faqSub = $('faqSub');
+    const faqMainTitle = $('faqMainTitle');
+    const faqWhatIsTitle = $('faqWhatIsTitle');
+    const faqWhatIsText = $('faqWhatIsText');
+    const faqHowWorksTitle = $('faqHowWorksTitle');
+    const faqHowWorksText = $('faqHowWorksText');
+    const faqWhereStoreTitle = $('faqWhereStoreTitle');
+    const faqWhereStoreText = $('faqWhereStoreText');
+    const faqNeedSetupTitle = $('faqNeedSetupTitle');
+    const faqNeedSetupText = $('faqNeedSetupText');
+    const faqCancelSubTitle = $('faqCancelSubTitle');
+    const faqCancelSubText = $('faqCancelSubText');
+
+    if (faqTitle) faqTitle.textContent = 'FAQ';
+    if (faqSub)
+      faqSub.textContent = ru
+        ? 'РљРѕСЂРѕС‚РєРёРµ РѕС‚РІРµС‚С‹ РїСЂРѕ GetLifeUndo, С…СЂР°РЅРµРЅРёРµ РґР°РЅРЅС‹С… Рё РїРѕРґРїРёСЃРєСѓ.'
+        : 'Short answers about GetLifeUndo, data storage and subscription.';
+
+    if (faqMainTitle) faqMainTitle.textContent = ru ? 'Р§Р°СЃС‚С‹Рµ РІРѕРїСЂРѕСЃС‹' : 'Frequently asked questions';
+
+    if (faqWhatIsTitle)
+      faqWhatIsTitle.textContent = ru ? 'Р§С‚Рѕ С‚Р°РєРѕРµ GetLifeUndo?' : 'What is GetLifeUndo?';
+    if (faqWhatIsText)
+      faqWhatIsText.textContent = ru
+        ? 'Р­С‚Рѕ Р»РѕРєР°Р»СЊРЅС‹Р№ С‚Р°Р№РјР»Р°Р№РЅ РІР°С€РµР№ РґРµСЏС‚РµР»СЊРЅРѕСЃС‚Рё: СЃРєСЂРёРЅС€РѕС‚С‹ Рё С‚РµРєСЃС‚ РёР· Р±СѓС„РµСЂР°. РџРѕРјРѕРіР°РµС‚ РІРµСЂРЅСѓС‚СЊСЃСЏ Рє С‚РѕРјСѓ, С‡С‚Рѕ РІС‹ РґРµР»Р°Р»Рё 5 РјРёРЅСѓС‚/С‡Р°СЃ/РґРµРЅСЊ РЅР°Р·Р°Рґ.'
+        : 'It is a local activity timeline: screenshots and clipboard text. It helps you jump back to what you did minutes/hours/days ago.';
+
+    if (faqHowWorksTitle)
+      faqHowWorksTitle.textContent = ru ? 'РљР°Рє СЌС‚Рѕ СЂР°Р±РѕС‚Р°РµС‚?' : 'How does it work?';
+    if (faqHowWorksText)
+      faqHowWorksText.textContent = ru
+        ? 'Р”РµСЃРєС‚РѕРїРЅРѕРµ РїСЂРёР»РѕР¶РµРЅРёРµ РѕС‚СЃР»РµР¶РёРІР°РµС‚ СЃРёСЃС‚РµРјРЅС‹Рµ РїР°РїРєРё СЃРєСЂРёРЅС€РѕС‚РѕРІ Рё СЃРѕС…СЂР°РЅСЏРµС‚ С‚РµРєСЃС‚ РёР· Р±СѓС„РµСЂР° РѕР±РјРµРЅР°. Р’СЃС‘ РѕСЃС‚Р°С‘С‚СЃСЏ РЅР° РІР°С€РµРј РґРёСЃРєРµ.'
+        : 'The desktop app watches system screenshot folders and stores clipboard text. Everything stays on your disk.';
+
+    if (faqWhereStoreTitle)
+      faqWhereStoreTitle.textContent = ru ? 'Р“РґРµ С…СЂР°РЅСЏС‚СЃСЏ РґР°РЅРЅС‹Рµ?' : 'Where is data stored?';
+    if (faqWhereStoreText)
+      faqWhereStoreText.textContent = ru
+        ? 'Р›РѕРєР°Р»СЊРЅРѕ, РІ РєР°С‚Р°Р»РѕРіРµ РґР°РЅРЅС‹С… РїСЂРёР»РѕР¶РµРЅРёСЏ. РџР°РїРєСѓ РјРѕР¶РЅРѕ РѕС‚РєСЂС‹С‚СЊ С‡РµСЂРµР· РЅР°СЃС‚СЂРѕР№РєРё РґРµСЃРєС‚РѕРїРЅРѕР№ РІРµСЂСЃРёРё.'
+        : 'Locally, in the app data directory. You can open the folder from the desktop Settings.';
+
+    if (faqNeedSetupTitle)
+      faqNeedSetupTitle.textContent = ru ? 'РќСѓР¶РЅРѕ Р»Рё С‡С‚РѕвЂ‘С‚Рѕ РЅР°СЃС‚СЂР°РёРІР°С‚СЊ?' : 'Do I need to configure anything?';
+    if (faqNeedSetupText)
+      faqNeedSetupText.textContent = ru
+        ? 'РџРѕ СѓРјРѕР»С‡Р°РЅРёСЋ РІСЃС‘ СЂР°Р±РѕС‚Р°РµС‚ СЃСЂР°Р·Сѓ. Р”РѕРїРѕР»РЅРёС‚РµР»СЊРЅРѕ РІС‹ РјРѕР¶РµС‚Рµ РґРѕР±Р°РІРёС‚СЊ СЃРІРѕРё РїР°РїРєРё РґР»СЏ РЅР°Р±Р»СЋРґРµРЅРёСЏ Рё РІС‹Р±СЂР°С‚СЊ РјРµСЃС‚Рѕ С…СЂР°РЅРµРЅРёСЏ.'
+        : 'Defaults work out of the box. You may add custom watch folders and choose a storage location.';
+
+    if (faqCancelSubTitle)
+      faqCancelSubTitle.textContent = ru ? 'Р§С‚Рѕ РµСЃР»Рё РѕС‚РјРµРЅРёС‚СЊ РїРѕРґРїРёСЃРєСѓ?' : 'What if I cancel the subscription?';
+    if (faqCancelSubText)
+      faqCancelSubText.textContent = ru
+        ? 'Р›РѕРєР°Р»СЊРЅС‹Р№ РґРѕСЃС‚СѓРї Рє РІР°С€РёРј РґР°РЅРЅС‹Рј СЃРѕС…СЂР°РЅРёС‚СЃСЏ. РџСЂРµРјРёСѓРјвЂ‘С„СѓРЅРєС†РёРё Рё Р±СѓРґСѓС‰РёРµ РѕР±Р»Р°С‡РЅС‹Рµ РІРѕР·РјРѕР¶РЅРѕСЃС‚Рё СЃС‚Р°РЅСѓС‚ РЅРµРґРѕСЃС‚СѓРїРЅС‹, РЅРѕ РёСЃС‚РѕСЂРёСЏ РѕСЃС‚Р°РЅРµС‚СЃСЏ РЅР° РІР°С€РµРј СѓСЃС‚СЂРѕР№СЃС‚РІРµ.'
+        : 'Local access to your data remains. Premium and future cloud features will be disabled, but history stays on your device.';
+  }
+}
+
+// РћР±РЅРѕРІР»СЏРµС‚ Р±Р»РѕРє "Р’РєР»Р°РґРєРё" РІ Р›РµРЅС‚Рµ РЅР° РѕСЃРЅРѕРІРµ РЅРµРґР°РІРЅРѕ Р·Р°РєСЂС‹С‚С‹С… РІРєР»Р°РґРѕРє Р±СЂР°СѓР·РµСЂР°
+function refreshTimelineTabs() {
+  const listEl = $('tlTabsList');
+  const emptyEl = $('tlTabsEmpty');
+  if (!listEl) return;
+
+  listEl.innerHTML = '';
+
+  try {
+    const s = api && api.sessions;
+    if (!s || typeof s.getRecentlyClosed !== 'function') {
+      if (emptyEl) emptyEl.style.display = 'block';
+      return;
+    }
+
+    s.getRecentlyClosed({ maxResults: 20 }, (items) => {
+      const sessions = Array.isArray(items) ? items : [];
+
+      if (!sessions.length) {
+        if (emptyEl) emptyEl.style.display = 'block';
+        return;
+      }
+
+      if (emptyEl) emptyEl.style.display = 'none';
+
+      sessions.forEach((session) => {
+        const t = session.tab;
+        if (!t || !t.url) return;
+
+        const li = document.createElement('li');
+        li.style.cursor = 'pointer';
+        li.style.display = 'flex';
+        li.style.flexDirection = 'column';
+
+        const title = document.createElement('span');
+        title.textContent = t.title || t.url;
+        li.appendChild(title);
+
+        const urlLine = document.createElement('span');
+        urlLine.textContent = t.url;
+        urlLine.style.fontSize = '11px';
+        urlLine.style.color = '#9ca3af';
+        li.appendChild(urlLine);
+
+        li.addEventListener('click', () => {
+          try {
+            if (session.sessionId) {
+              api.sessions.restore(session.sessionId, () => {});
+            } else if (t.sessionId) {
+              api.sessions.restore(t.sessionId, () => {});
+            }
+          } catch (e) {}
+        });
+
+        listEl.appendChild(li);
+      });
+    });
+  } catch (e) {
+    if (emptyEl) emptyEl.style.display = 'block';
+  }
+}
+
+function bindLang() {
+  const btnRu = $('ppLangRu');
+  const btnEn = $('ppLangEn');
+
+  if (btnRu) {
+    btnRu.addEventListener('click', () => {
+      currentLang = 'ru';
+      try {
+        localStorage.setItem('lu_lang', 'ru');
+      } catch (e) {}
+      applyLang();
+    });
+  }
+
+  if (btnEn) {
+    btnEn.addEventListener('click', () => {
+      currentLang = 'en';
+      try {
+        localStorage.setItem('lu_lang', 'en');
+      } catch (e) {}
+      applyLang();
+    });
+  }
+}
+
+function openUrl(url) {
+  try {
+    api.tabs.create({ url });
+  } catch (e) {
+    window.open(url, '_blank');
+  }
+}
+
+function bindSettingsTabs() {
+  const overlay = $('settingsOverlay');
+  const btnGear = document.getElementById('btnGear');
+  const btnBack = $('stBack');
+  const titleEl = $('stTitle');
+  const buttons = Array.from(document.querySelectorAll('.settings-tab-btn'));
+  const sections = Array.from(document.querySelectorAll('.settings-section'));
+
+  if (btnGear && overlay) {
+    btnGear.addEventListener('click', () => {
+      overlay.classList.add('open');
+      document.body.classList.add('settings-open');
+      // РїСЂРё РѕС‚РєСЂС‹С‚РёРё РїР°РЅРµР»Рё Р·Р°РіРѕР»РѕРІРѕРє вЂ” РїСЂРѕСЃС‚Рѕ "РќР°СЃС‚СЂРѕР№РєРё/Settings"
+      if (titleEl) titleEl.textContent = currentLang === 'ru' ? 'РќР°СЃС‚СЂРѕР№РєРё' : 'Settings';
+    });
+  }
+
+  if (btnBack && overlay) {
+    btnBack.addEventListener('click', () => {
+      overlay.classList.remove('open');
+      document.body.classList.remove('settings-open');
+      buttons.forEach((b) => b.classList.remove('active'));
+      sections.forEach((s) => s.classList.remove('active'));
+      if (titleEl) titleEl.textContent = currentLang === 'ru' ? 'РќР°СЃС‚СЂРѕР№РєРё' : 'Settings';
+    });
+  }
+
+  buttons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const tab = btn.getAttribute('data-tab');
+
+      buttons.forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      sections.forEach((s) => s.classList.remove('active'));
+      if (tab) {
+        const panelId = 'stPanel' + tab.charAt(0).toUpperCase() + tab.slice(1);
+        const panel = $(panelId);
+        if (panel) panel.classList.add('active');
+
+        if (tab === 'activity') {
+          refreshTimelineTabs();
+        }
+      }
+
+      if (titleEl) {
+        const txt = btn.textContent && btn.textContent.trim();
+        titleEl.textContent = txt || (currentLang === 'ru' ? 'РќР°СЃС‚СЂРѕР№РєРё' : 'Settings');
+      }
+    });
+  });
+}
+
+function bindFooter() {
+  const map = {
+    ftSite: 'https://getlifeundo.com',
+    ftGitHub: 'https://github.com/LifeUndo',
+    ftPrivacy: 'https://getlifeundo.com/ru/privacy',
+    ftOffer: 'https://getlifeundo.com/ru/offer'
+  };
+
+  Object.keys(map).forEach((id) => {
+    const el = $(id);
+    if (!el) return;
+    el.addEventListener('click', () => openUrl(map[id]));
+  });
+}
+
+function initVersionAndTrial() {
+  try {
+    const manifest = api && api.runtime && api.runtime.getManifest ? api.runtime.getManifest() : null;
+    const v = manifest && manifest.version ? manifest.version : '';
+    const verEl = $('ppVersion');
+    if (verEl) verEl.textContent = v ? `v${v}` : 'v0.0.0';
+  } catch (e) {}
+
+  // trialState РјРѕР¶РµС‚ Р±С‹С‚СЊ Р·Р°РїРѕР»РЅРµРЅ РїРѕР·Р¶Рµ РёР· storage; СЃРµР№С‡Р°СЃ РїСЂРѕСЃС‚Рѕ РѕС‚СЂРёСЃСѓРµРј РєР°РїСЃСѓР»Сѓ
+  renderTrialCapsule();
+}
+
+function bindGeneralSettings() {
+  const langSelect = $('stGenLang');
+  const emailInput = $('stGenEmail');
+  const emailBtn = $('stGenEmailSave');
+  const btnShowHere = $('stGenShowHere');
+  const btnShots = $('stGenShots');
+  const btnVideo = $('stGenVideo');
+  const btnEvent = $('stGenEvent');
+
+  // РёРЅРёС†РёР°Р»РёР·Р°С†РёСЏ СЏР·С‹РєР° Рё email РёР· chrome.storage.local
+  try {
+    api.storage.local.get({ lu_settings_ext: {}, lu_accountEmail: '' }, (res) => {
+      const st = res.lu_settings_ext || {};
+
+      if (st.lang === 'en' || st.lang === 'ru') {
+        currentLang = st.lang;
+      }
+      if (langSelect) {
+        langSelect.value = currentLang;
+        langSelect.addEventListener('change', () => {
+          currentLang = langSelect.value === 'en' ? 'en' : 'ru';
+          api.storage.local.set({
+            lu_settings_ext: { ...st, lang: currentLang }
+          });
+          try {
+            localStorage.setItem('lu_lang', currentLang);
+          } catch (e) {}
+          applyLang();
+        });
+      }
+
+      if (emailInput && typeof res.lu_accountEmail === 'string') {
+        emailInput.value = res.lu_accountEmail;
+      }
+
+      // РёРЅРёС†РёР°Р»РёР·Р°С†РёСЏ С‚РѕРіРіР»РѕРІ
+      const showHere = !!st.showListHere;
+      const shots = st.shotsEnabled !== false;
+      const video = !!st.videoEnabled;
+      const eventMode = !!st.eventMode;
+
+      function applyToggle(btn, on) {
+        if (!btn) return;
+        btn.textContent = on ? 'ON' : 'OFF';
+        btn.classList.toggle('on', on);
+      }
+
+      applyToggle(btnShowHere, showHere);
+      applyToggle(btnShots, shots);
+      applyToggle(btnVideo, video);
+      applyToggle(btnEvent, eventMode);
+    });
+  } catch (e) {}
+
+  function toggleSetting(key, btn) {
+    if (!btn) return;
+    btn.addEventListener('click', () => {
+      try {
+        api.storage.local.get({ lu_settings_ext: {} }, (res) => {
+          const st = res.lu_settings_ext || {};
+          const cur = !!st[key];
+          const next = !cur;
+          const ns = { ...st, [key]: next };
+          // shotsEnabled РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ true, РїРѕСЌС‚РѕРјСѓ РїСЂРё РІС‹РєР»СЋС‡РµРЅРёРё РїРёС€РµРј false
+          if (key === 'shotsEnabled' && next === true) {
+            ns[key] = true;
+          }
+          api.storage.local.set({ lu_settings_ext: ns });
+
+          btn.textContent = next ? 'ON' : 'OFF';
+          btn.classList.toggle('on', next);
+        });
+      } catch (e) {}
+    });
+  }
+
+  toggleSetting('showListHere', btnShowHere);
+  toggleSetting('shotsEnabled', btnShots);
+  toggleSetting('videoEnabled', btnVideo);
+  toggleSetting('eventMode', btnEvent);
+
+  if (emailBtn) {
+    emailBtn.addEventListener('click', () => {
+      const email = (emailInput && emailInput.value.trim()) || '';
+      if (!email) {
+        alert(currentLang === 'ru' ? 'Р’РІРµРґРёС‚Рµ email.' : 'Please enter email.');
+        return;
+      }
+
+      try {
+        api.storage.local.set({ lu_accountEmail: email });
+      } catch (e) {}
+
+      // РЈРїСЂРѕС‰С‘РЅРЅС‹Р№ mailto, РєР°Рє РІ РґРµСЃРєС‚РѕРїРµ, РЅРѕ С‚РѕР»СЊРєРѕ СЃ Р±Р°Р·РѕРІРѕР№ РёРЅС„РѕСЂРјР°С†РёРµР№
+      let subject;
+      if (currentLang === 'ru') {
+        subject = 'LifeUndo вЂ” email РґР»СЏ РІР°Р¶РЅС‹С… РѕР±РЅРѕРІР»РµРЅРёР№';
+      } else {
+        subject = 'LifeUndo вЂ” email for important updates';
+      }
+
+      let version = '';
+      try {
+        const m = api && api.runtime && api.runtime.getManifest ? api.runtime.getManifest() : null;
+        version = m && m.version ? m.version : '';
+      } catch (e) {}
+
+      const bodyLines = [
+        `Email: ${email}`,
+        'Client: browser-extension',
+        version ? `Version: ${version}` : ''
+      ].filter(Boolean);
+
+      const mailto =
+        'mailto:legal@getlifeundo.com?subject=' +
+        encodeURIComponent(subject) +
+        '&body=' +
+        encodeURIComponent(bodyLines.join('\n'));
+
+      window.open(mailto, '_blank');
+
+      alert(
+        currentLang === 'ru'
+          ? 'Email СЃРѕС…СЂР°РЅС‘РЅ Р»РѕРєР°Р»СЊРЅРѕ. РњС‹ РёСЃРїРѕР»СЊР·СѓРµРј РµРіРѕ РІ РґРµСЃРєС‚РѕРїРЅРѕР№ РІРµСЂСЃРёРё Рё РїРёСЃСЊРјРµ.'
+          : 'Email saved locally. It will be used by desktop client and email.'
+      );
+    });
+  }
+}
+
+function bindSubscriptionActions() {
+  const btnPortal = $('btnSubPortal');
+  const btnStatus = $('btnSubStatus');
+  const btnPro = $('btnSubPro');
+  const btnVip = $('btnSubVip');
+  const btnTeam = $('btnSubTeam');
+
+  if (btnPortal) {
+    btnPortal.addEventListener('click', () => {
+      openUrl('https://getlifeundo.com/account');
+    });
+  }
+
+  if (btnStatus) {
+    btnStatus.addEventListener('click', () => {
+      alert(
+        currentLang === 'ru'
+          ? 'РЎС‚Р°С‚СѓСЃ РїРѕРґРїРёСЃРєРё Р±СѓРґРµС‚ РѕР±РЅРѕРІР»СЏС‚СЊСЃСЏ С‡РµСЂРµР· backend РїРѕР·Р¶Рµ.'
+          : 'Subscription status refresh will be wired to backend later.'
+      );
+    });
+  }
+
+  const goPlan = (plan) => {
+    // Р’ РґРµСЃРєС‚РѕРїРµ С‚СѓС‚ fkCreate; РІ СЂР°СЃС€РёСЂРµРЅРёРё РїСЂРѕСЃС‚Рѕ РѕС‚РєСЂС‹РІР°РµРј СЃС‚СЂР°РЅРёС†Сѓ РѕРїР»Р°С‚С‹
+    const base = 'https://getlifeundo.com/account';
+    const url = `${base}?plan=${encodeURIComponent(plan)}`;
+    openUrl(url);
+  };
+
+  if (btnPro) {
+    btnPro.addEventListener('click', () => goPlan('pro_month'));
+  }
+  if (btnVip) {
+    btnVip.addEventListener('click', () => goPlan('vip_lifetime'));
+  }
+  if (btnTeam) {
+    btnTeam.addEventListener('click', () => goPlan('team_5'));
+  }
+}
+
+function bindAppsAboutTeam() {
+  // Apps вЂ” QR/СЃСЃС‹Р»РєРё
+  const btnDesktopShare = $('btnAppsDesktopShare');
+  if (btnDesktopShare) {
+    btnDesktopShare.addEventListener('click', () => {
+      const url = 'https://getlifeundo.com/ru/downloads';
+      try {
+        navigator.clipboard.writeText(url).then(
+          () => {
+            alert(
+              currentLang === 'ru'
+                ? 'РЎСЃС‹Р»РєР° РЅР° Р·Р°РіСЂСѓР·РєРё СЃРєРѕРїРёСЂРѕРІР°РЅР° РІ Р±СѓС„РµСЂ РѕР±РјРµРЅР°.'
+                : 'Downloads link copied to clipboard.'
+            );
+          },
+          () => {
+            try {
+              api.tabs.create({ url });
+            } catch (e) {
+              window.open(url, '_blank');
+            }
+          }
+        );
+      } catch (e) {
+        try {
+          api.tabs.create({ url });
+        } catch (e2) {
+          window.open(url, '_blank');
+        }
+      }
+    });
+  }
+
+  const btnRustore = $('btnAppsRustore');
+  if (btnRustore) {
+    btnRustore.addEventListener('click', () => {
+      const url = 'https://www.rustore.ru/catalog/app/com.getlifeundo.lifeundo_app';
+      try {
+        api.tabs.create({ url });
+      } catch (e) {
+        window.open(url, '_blank');
+      }
+    });
+  }
+
+  const btnApk = $('btnAppsApk');
+  if (btnApk) {
+    btnApk.addEventListener('click', () => {
+      const url = 'https://github.com/LifeUndo';
+      try {
+        api.tabs.create({ url });
+      } catch (e) {
+        window.open(url, '_blank');
+      }
+    });
+  }
+
+  // TEAM admin
+  const btnTeamAdmin = $('btnTeamAdmin');
+  if (btnTeamAdmin) {
+    btnTeamAdmin.addEventListener('click', () => {
+      const url = 'https://getlifeundo.com/admin';
+      try {
+        api.tabs.create({ url });
+      } catch (e) {
+        window.open(url, '_blank');
+      }
+    });
+  }
+
+  // About вЂ” СЃРѕС†СЃРµС‚Рё / РјР°РіР°Р·РёРЅС‹ / РґРµР№СЃС‚РІРёСЏ
+  const openUrl = (id, url) => {
+    const btn = $(id);
+    if (!btn) return;
+    btn.addEventListener('click', () => {
+      try {
+        api.tabs.create({ url });
+      } catch (e) {
+        window.open(url, '_blank');
+      }
+    });
+  };
+
+  openUrl('btnAboutTelegram', 'https://t.me/getlifeundo');
+  openUrl('btnAboutVK', 'https://vk.ru/GetLifeUndo');
+  openUrl('btnAboutX', 'https://x.com/getlifeundo');
+  openUrl('btnAboutYouTube', 'https://youtube.com/@getlifeundo');
+  openUrl('btnAboutFirefox', 'https://addons.mozilla.org');
+  openUrl('btnAboutRuStore', 'https://www.rustore.ru/catalog/app/com.getlifeundo.lifeundo_app');
+  openUrl('btnAboutGitHub', 'https://github.com/LifeUndo');
+
+  const btnShare = $('btnAboutShare');
+  if (btnShare) {
+    btnShare.addEventListener('click', () => {
+      const url = 'https://getlifeundo.com';
+      try {
+        const n = navigator;
+        if (n && typeof n.share === 'function') {
+          n.share({ title: 'GetLifeUndo', url }).catch(() => {});
+          return;
+        }
+      } catch (e) {}
+
+      try {
+        navigator.clipboard.writeText(url).then(
+          () => {
+            alert(
+              currentLang === 'ru'
+                ? 'РЎСЃС‹Р»РєР° РЅР° СЃР°Р№С‚ СЃРєРѕРїРёСЂРѕРІР°РЅР° РІ Р±СѓС„РµСЂ РѕР±РјРµРЅР°.'
+                : 'Website link copied to clipboard.'
+            );
+          },
+          () => {
+            try {
+              api.tabs.create({ url });
+            } catch (e) {
+              window.open(url, '_blank');
+            }
+          }
+        );
+      } catch (e) {
+        try {
+          api.tabs.create({ url });
+        } catch (e2) {
+          window.open(url, '_blank');
+        }
+      }
+    });
+  }
+
+  const btnRate = $('btnAboutRate');
+  if (btnRate) {
+    btnRate.addEventListener('click', () => {
+      const url = 'https://www.rustore.ru/catalog/app/com.getlifeundo.lifeundo_app';
+      try {
+        api.tabs.create({ url });
+      } catch (e) {
+        window.open(url, '_blank');
+      }
+    });
+  }
+}
+
+(function init() {
+  // ...
+
+  bindLang();
+  bindSettingsTabs();
+  bindFooter();
+  initVersionAndTrial();
+  bindGeneralSettings();
+  bindSubscriptionActions();
+  bindAppsAboutTeam();
+
+  applyLang();
+})();
+function refreshTimelineScreens() {
+  const listEl = $('tlShotsList');
+  const emptyEl = $('tlShotsEmpty');
+  if (!listEl) return;
+
+  listEl.innerHTML = '';
+
+  try {
+    const rt = api && api.runtime;
+    if (!rt || typeof rt.sendMessage !== 'function') {
+      if (emptyEl) emptyEl.style.display = 'block';
+      return;
+    }
+
+    rt.sendMessage({ type: 'LU_GET_SCREENSHOTS' }, (res) => {
+      const list = (res && res.list && Array.isArray(res.list)) ? res.list : [];
+
+      if (!list.length) {
+        if (emptyEl) emptyEl.style.display = 'block';
+        return;
+      }
+
+      if (emptyEl) emptyEl.style.display = 'none';
+
+      list.forEach((item, index) => {
+        if (!item || !item.dataUrl) return;
+
+        const wrap = document.createElement('div');
+        wrap.style.width = '80px';
+        wrap.style.height = '50px';
+        wrap.style.overflow = 'hidden';
+        wrap.style.borderRadius = '4px';
+        wrap.style.border = '1px solid rgba(148,163,184,0.5)';
+        wrap.style.position = 'relative';
+        wrap.style.cursor = 'pointer';
+        wrap.style.backgroundColor = '#020617';
+
+        const img = document.createElement('img');
+        img.src = item.dataUrl;
+        img.style.width = '100%';
+        img.style.height = '100%';
+        img.style.objectFit = 'cover';
+
+        img.addEventListener('click', () => {
+          try {
+            const w = window.open();
+            if (w && w.document) {
+              const im = w.document.createElement('img');
+              im.src = item.dataUrl;
+              im.style.maxWidth = '100%';
+              im.style.height = 'auto';
+              w.document.body.style.margin = '0';
+              w.document.body.style.backgroundColor = '#000';
+              w.document.body.appendChild(im);
+            }
+          } catch (e) {}
+        });
+
+        const del = document.createElement('button');
+        del.textContent = '?';
+        del.style.position = 'absolute';
+        del.style.top = '2px';
+        del.style.right = '2px';
+        del.style.width = '16px';
+        del.style.height = '16px';
+        del.style.border = 'none';
+        del.style.borderRadius = '999px';
+        del.style.padding = '0';
+        del.style.fontSize = '11px';
+        del.style.lineHeight = '16px';
+        del.style.cursor = 'pointer';
+        del.style.backgroundColor = 'rgba(15,23,42,0.8)';
+        del.style.color = '#e5e7eb';
+
+        del.addEventListener('click', (ev) => {
+          ev.stopPropagation();
+          try {
+            rt.sendMessage({ type: 'LU_DELETE_SCREENSHOT', payload: { index } }, () => {
+              refreshTimelineScreens();
+            });
+          } catch (e) {}
+        });
+
+        wrap.appendChild(img);
+        wrap.appendChild(del);
+        listEl.appendChild(wrap);
+      });
+    });
+  } catch (e) {
+    if (emptyEl) emptyEl.style.display = 'block';
+  }
+}
+
+function bindTimelineScreenshots() {
+  const btn = $('tlShotCapture');
+  if (!btn) return;
+
+  let busy = false;
+
+  btn.addEventListener('click', () => {
+    if (busy) return;
+    busy = true;
+
+    const originalText = btn.textContent || '';
+    btn.disabled = true;
+    btn.textContent = currentLang === 'ru' ? 'Сохраняем…' : 'Saving…';
+
+    try {
+      const rt = api && api.runtime;
+      if (!rt || typeof rt.sendMessage !== 'function') {
+        btn.disabled = false;
+        btn.textContent = originalText;
+        busy = false;
+        alert(currentLang === 'ru' ? 'Не удалось захватить скриншот.' : 'Failed to capture screenshot.');
+        return;
+      }
+
+      rt.sendMessage({ type: 'LU_TAKE_SCREENSHOT' }, (res) => {
+        btn.disabled = false;
+        btn.textContent = originalText;
+        busy = false;
+
+        if (!res || !res.ok) {
+          alert(currentLang === 'ru' ? 'Не удалось захватить скриншот.' : 'Failed to capture screenshot.');
+          return;
+        }
+
+        refreshTimelineScreens();
+      });
+    } catch (e) {
+      btn.disabled = false;
+      btn.textContent = originalText;
+      busy = false;
+      alert(currentLang === 'ru' ? 'Ошибка при захвате скриншота.' : 'Error while capturing screenshot.');
+    }
+  });
+}
+
+(function initTimelineScreenshots() {
+  try {
+    bindTimelineScreenshots();
+    refreshTimelineScreens();
+  } catch (e) {}
+})();
+
+

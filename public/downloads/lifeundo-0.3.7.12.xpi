@@ -1,0 +1,9 @@
+# LifeUndo Firefox Extension - Placeholder
+
+This is a placeholder file for the actual XPI package.
+The real XPI file should be placed here after building the extension.
+
+Version: 0.3.7.12
+Build: Production
+Signed: Yes (AMO)
+Distribution: Unlisted/Self-hosted

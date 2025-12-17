@@ -1,0 +1,45 @@
+{
+  "manifest_version": 2,
+  "name": "GetLifeUndo",
+  "version": "0.6.1.2",
+  "description": "Ctrl+Z для жизни в интернете. Восстанавливает текст форм, буфер обмена и закрытые вкладки — локально и приватно.",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "lifeundo@example.com",
+      "strict_min_version": "109.0"
+    }
+  },
+  "background": {
+    "scripts": ["background.firefox.js"]
+  },
+  "browser_action": {
+    "default_popup": "popup.html",
+    "default_title": "GetLifeUndo",
+    "default_icon": {
+      "16": "icon16.png",
+      "32": "icon32.png",
+      "48": "icon48.png"
+    }
+  },
+  "permissions": [
+    "storage",
+    "tabs",
+    "sessions",
+    "clipboardRead",
+    "alarms",
+    "https://getlifeundo.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["contentScript.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "icons": {
+    "16": "icon16.png",
+    "32": "icon32.png", 
+    "48": "icon48.png",
+    "128": "icon128.png"
+  }
+}

@@ -1,0 +1,553 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "LifeUndo API",
+    "description": "API для управления лицензиями и интеграции с платформой LifeUndo",
+    "version": "0.4.7",
+    "contact": {
+      "name": "LifeUndo Support",
+      "email": "support@lifeundo.ru",
+      "url": "https://www.getlifeundo.com/support"
+    },
+    "license": {
+      "name": "Proprietary",
+      "url": "https://www.getlifeundo.com/terms"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://www.getlifeundo.com",
+      "description": "Production server"
+    },
+    {
+      "url": "https://lifeundo.ru",
+      "description": "Demo server"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/health": {
+      "get": {
+        "summary": "Health Check",
+        "description": "Проверка состояния API и доступности сервиса",
+        "tags": ["System"],
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Сервис работает нормально",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "ok"
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2025-09-27T00:00:00.000Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Сервис недоступен"
+          }
+        }
+      }
+    },
+    "/api/fk/create": {
+      "post": {
+        "summary": "Создание платежа",
+        "description": "Создание нового платежа через FreeKassa",
+        "tags": ["Payments"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email", "plan"],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "Email пользователя для активации",
+                    "example": "user@example.com"
+                  },
+                  "plan": {
+                    "type": "string",
+                    "enum": ["pro_monthly", "vip_lifetime"],
+                    "description": "Выбранный тарифный план",
+                    "example": "pro_monthly"
+                  },
+                  "amount": {
+                    "type": "number",
+                    "description": "Сумма платежа (автоматически определяется по плану)",
+                    "example": 99.00
+                  },
+                  "currency": {
+                    "type": "string",
+                    "default": "RUB",
+                    "description": "Валюта платежа",
+                    "example": "RUB"
+                  },
+                  "locale": {
+                    "type": "string",
+                    "default": "ru",
+                    "description": "Язык интерфейса",
+                    "example": "ru"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Платеж создан успешно",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "url": {
+                      "type": "string",
+                      "format": "uri",
+                      "description": "URL для перехода к оплате",
+                      "example": "https://pay.freekassa.net/?m=123&oa=99.00&o=ORDER123&s=SIGNATURE"
+                    },
+                    "order_id": {
+                      "type": "string",
+                      "description": "ID заказа",
+                      "example": "ORDER123"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Ошибка валидации данных"
+          },
+          "429": {
+            "description": "Превышен лимит запросов"
+          }
+        }
+      }
+    },
+    "/api/fk/notify": {
+      "get": {
+        "summary": "Webhook уведомления FreeKassa",
+        "description": "Обработка уведомлений о статусе платежа от FreeKassa",
+        "tags": ["Payments"],
+        "security": [],
+        "parameters": [
+          {
+            "name": "MERCHANT_ORDER_ID",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID заказа"
+          },
+          {
+            "name": "AMOUNT",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Сумма платежа"
+          },
+          {
+            "name": "SIGN",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Подпись запроса"
+          },
+          {
+            "name": "intid",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Внутренний ID транзакции"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Уведомление обработано",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "enum": ["YES", "DUPLICATE", "ALREADY_PAID"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Неверная подпись или параметры"
+          },
+          "404": {
+            "description": "Заказ не найден"
+          },
+          "500": {
+            "description": "Ошибка сервера"
+          }
+        }
+      }
+    },
+    "/api/license/validate": {
+      "post": {
+        "summary": "Проверка лицензии",
+        "description": "Валидация лицензионного ключа",
+        "tags": ["Licenses"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["license_key"],
+                "properties": {
+                  "license_key": {
+                    "type": "string",
+                    "description": "Лицензионный ключ",
+                    "example": "LICENSE_KEY_HERE"
+                  },
+                  "product_id": {
+                    "type": "string",
+                    "description": "ID продукта",
+                    "example": "lifeundo_pro"
+                  },
+                  "hardware_id": {
+                    "type": "string",
+                    "description": "Уникальный ID оборудования",
+                    "example": "HW123456789"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Лицензия валидна",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "valid": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "license_type": {
+                      "type": "string",
+                      "example": "pro_monthly"
+                    },
+                    "expires_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2025-12-31T23:59:59.000Z"
+                    },
+                    "features": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": ["email_pause", "analytics", "priority_support"]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Неверный формат лицензии"
+          },
+          "401": {
+            "description": "Лицензия недействительна"
+          }
+        }
+      }
+    },
+    "/api/license/activate": {
+      "post": {
+        "summary": "Активация лицензии",
+        "description": "Активация лицензии на конкретном устройстве",
+        "tags": ["Licenses"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["license_key", "hardware_id"],
+                "properties": {
+                  "license_key": {
+                    "type": "string",
+                    "description": "Лицензионный ключ",
+                    "example": "LICENSE_KEY_HERE"
+                  },
+                  "hardware_id": {
+                    "type": "string",
+                    "description": "Уникальный ID оборудования",
+                    "example": "HW123456789"
+                  },
+                  "device_name": {
+                    "type": "string",
+                    "description": "Название устройства",
+                    "example": "My Computer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Лицензия активирована",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "activated": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "activation_id": {
+                      "type": "string",
+                      "example": "ACT123456789"
+                    },
+                    "expires_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2025-12-31T23:59:59.000Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Ошибка активации"
+          },
+          "409": {
+            "description": "Лицензия уже активирована на другом устройстве"
+          }
+        }
+      }
+    },
+    "/api/email/pause": {
+      "post": {
+        "summary": "Приостановка отправки писем",
+        "description": "Временная приостановка отправки писем",
+        "tags": ["Email"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "duration_minutes": {
+                    "type": "integer",
+                    "description": "Длительность паузы в минутах",
+                    "example": 60,
+                    "minimum": 1,
+                    "maximum": 1440
+                  },
+                  "reason": {
+                    "type": "string",
+                    "description": "Причина паузы",
+                    "example": "maintenance"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Пауза установлена",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "paused": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "until": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2025-09-27T01:00:00.000Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Неверные параметры"
+          }
+        }
+      }
+    },
+    "/api/email/resume": {
+      "post": {
+        "summary": "Возобновление отправки писем",
+        "description": "Снятие паузы и возобновление отправки писем",
+        "tags": ["Email"],
+        "responses": {
+          "200": {
+            "description": "Отправка возобновлена",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "resumed": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "resumed_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2025-09-27T00:30:00.000Z"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/email/status": {
+      "get": {
+        "summary": "Статус очереди писем",
+        "description": "Получение информации о состоянии очереди писем",
+        "tags": ["Email"],
+        "responses": {
+          "200": {
+            "description": "Статус очереди",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": ["active", "paused", "error"],
+                      "example": "active"
+                    },
+                    "queue_size": {
+                      "type": "integer",
+                      "description": "Количество писем в очереди",
+                      "example": 42
+                    },
+                    "processed_today": {
+                      "type": "integer",
+                      "description": "Обработано сегодня",
+                      "example": 156
+                    },
+                    "paused_until": {
+                      "type": "string",
+                      "format": "date-time",
+                      "description": "Пауза до (если активна)",
+                      "example": "2025-09-27T01:00:00.000Z"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "API ключ в формате Bearer token"
+      }
+    },
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "Описание ошибки"
+          },
+          "code": {
+            "type": "string",
+            "description": "Код ошибки"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Время возникновения ошибки"
+          }
+        }
+      },
+      "RateLimit": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "description": "Лимит запросов"
+          },
+          "remaining": {
+            "type": "integer",
+            "description": "Оставшиеся запросы"
+          },
+          "reset": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Время сброса лимита"
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "System",
+      "description": "Системные endpoints"
+    },
+    {
+      "name": "Payments",
+      "description": "Платежи и FreeKassa"
+    },
+    {
+      "name": "Licenses",
+      "description": "Управление лицензиями"
+    },
+    {
+      "name": "Email",
+      "description": "Email сервисы"
+    }
+  ]
+}

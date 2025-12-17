@@ -1,0 +1,17 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "GetLifeUndo",
+  "name_for_model": "getlifeundo",
+  "description_for_human": "Ctrl+Z для вашей онлайн-жизни. Восстанавливает случайно удаленные данные на любых устройствах.",
+  "description_for_model": "GetLifeUndo is a browser extension that provides undo functionality for web forms, tabs, and clipboard. It stores all data locally for privacy. The API provides license validation, payment processing, and health checks.",
+  "auth": {
+    "type": "none"
+  },
+  "api": {
+    "type": "openapi",
+    "url": "https://getlifeundo.com/openapi.yaml"
+  },
+  "logo_url": "https://getlifeundo.com/icon-512.png",
+  "contact_email": "support@getlifeundo.com",
+  "legal_info_url": "https://getlifeundo.com/ru/privacy"
+}

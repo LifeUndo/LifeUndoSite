@@ -1,0 +1,91 @@
+openapi: 3.0.3
+info:
+  title: GetLifeUndo API
+  description: API for GetLifeUndo browser extension - Ctrl+Z for your online life
+  version: 1.0.0
+  contact:
+    email: support@getlifeundo.com
+  license:
+    name: Proprietary
+servers:
+  - url: https://getlifeundo.com
+    description: Production server
+paths:
+  /api/healthz:
+    get:
+      summary: Health check
+      description: Check if the API is running
+      responses:
+        '200': 
+          description: API is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "ok"
+                  timestamp:
+                    type: string
+                    format: date-time
+  /api/debug/fk:
+    get:
+      summary: FreeKassa debug information
+      description: Get FreeKassa configuration status (development only)
+      responses:
+        '200':
+          description: FreeKassa debug info
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  merchantIdPresent:
+                    type: boolean
+                  fkEnabled:
+                    type: boolean
+  /api/license/validate:
+    post:
+      summary: Validate license key
+      description: Validate a GetLifeUndo license key
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                key:
+                  type: string
+                  description: License key (format: LU-XXXX-XXXX)
+                  example: "LU-1234-5678"
+              required:
+                - key
+      responses:
+        '200':
+          description: License validation result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  tier:
+                    type: string
+                    enum: [pro, vip]
+                    description: License tier
+                  expAt:
+                    type: string
+                    format: date-time
+                    description: Expiration date
+                  sign:
+                    type: string
+                    description: HMAC-SHA256 signature
+        '400':
+          description: Invalid request
+        '429':
+          description: Rate limit exceeded

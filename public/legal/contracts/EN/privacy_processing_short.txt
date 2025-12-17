@@ -1,0 +1,17 @@
+DATA PROCESSING POLICY (SUMMARY)
+
+Software "GetLifeUndo" works locally; no telemetry, and timeline content or browsing history are not uploaded to the server. On the {{COMPANY_SITE}} backend we process account data (e-mail), device identifiers and license / 7-day trial status, as well as only the data required by the payment provider. Support inquiries may process e-mail. Data subject rights are implemented upon request to {{COMPANY_EMAIL}}. Full terms — in DPA: {{COMPANY_SITE}}/en/legal/dpa.
+
+KEY PRINCIPLES:
+- Local data processing in user's browser/app, without uploading timeline content
+- No telemetry or user content collection
+- Centralized 7-day trial and license status linked to e-mail and devices on the {{COMPANY_SITE}} backend
+- Minimal data processing during payment via provider
+- Contact data processing only for support
+- Right to access, correct and delete data
+
+CONTACTS:
+Email: {{COMPANY_EMAIL}}
+Telegram: https://t.me/GetLifeUndoSupport
+
+Updated: {{DATE_UPDATED}}

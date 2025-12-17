@@ -1,0 +1,52 @@
+{
+  "name": "lifeundo-ru",
+  "version": "0.3.7.17",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "build:ext": "echo 'Extension build ready in extension/ folder' && echo 'Run: npm run build:ext:zip to create downloadable package'",
+    "build:ext:zip": "powershell -Command \"Compress-Archive -Path 'extension\\*' -DestinationPath 'public\\lifeundo-extension-chrome-0.6.1.2.zip' -Force\"",
+    "build:ext:edge": "powershell -Command \"Compress-Archive -Path 'extension\\*' -DestinationPath 'public\\lifeundo-extension-edge-0.6.1.2.zip' -Force\"",
+    "test:e2e": "node scripts/run-e2e.mjs",
+    "release:xpi": "powershell -ExecutionPolicy Bypass -File scripts/release/pack_firefox.ps1",
+    "release:sha": "powershell -ExecutionPolicy Bypass -File scripts/release/checksums.ps1",
+    "release:latest": "powershell -ExecutionPolicy Bypass -File scripts/release/update_latest.ps1",
+    "build:ff": "node scripts/build-firefox.js",
+    "audit": "node scripts/audit-structure.js",
+    "legal:sha": "node scripts/legal-sha.mjs",
+    "pre-release": "powershell -ExecutionPolicy Bypass -File scripts/release/pre_release_check.ps1"
+  },
+  "dependencies": {
+    "@sentry/nextjs": "^10.15.0",
+    "@types/qrcode": "^1.5.5",
+    "bcryptjs": "^3.0.2",
+    "crypto-js": "^4.2.0",
+    "drizzle-orm": "^0.44.5",
+    "next": "14.2.33",
+    "nodemailer": "^7.0.6",
+    "otplib": "^12.0.1",
+    "pg": "^8.16.3",
+    "qrcode": "^1.5.4",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "recharts": "^3.2.1",
+    "swr": "^2.3.6"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.55.1",
+    "@types/node": "20.11.30",
+    "@types/nodemailer": "^7.0.2",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "autoprefixer": "^10.4.16",
+    "eslint-config-next": "15.5.4",
+    "gitleaks": "^1.0.0",
+    "postcss": "^8.4.32",
+    "tailwindcss": "^3.4.0",
+    "typescript": "5.4.5",
+    "web-ext": "^7.12.0"
+  }
+}

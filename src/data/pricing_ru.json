@@ -1,0 +1,37 @@
+{
+  "tiers": {
+    "free": { 
+      "title": "Free (7 дней)", 
+      "limits": ["До 10 вкладок", "Базовые функции"], 
+      "price": 0 
+    },
+    "pro": { 
+      "title": "Pro", 
+      "monthly": 599, 
+      "yearly": 5990, 
+      "recommended": true 
+    },
+    "vip": { 
+      "title": "VIP (Lifetime)", 
+      "price": 9990 
+    },
+    "team": { 
+      "title": "Team (5 мест)", 
+      "monthly": 2990, 
+      "extraSeat": 490 
+    }
+  },
+  "bundles": [
+    { 
+      "id": "starter", 
+      "label": "Starter Bundle", 
+      "price": 3000, 
+      "months": 6, 
+      "note": "Стабильнее проходит у провайдера" 
+    }
+  ],
+  "notes": [
+    "Если помесячная оплата не прошла: попробуйте снова или выберите Starter Bundle (6 месяцев за 3 000 ₽).",
+    "Годовая экономия ~17% от ежемесячной оплаты."
+  ]
+}

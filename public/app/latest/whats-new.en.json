@@ -1,0 +1,10 @@
+﻿{
+  "version": "0.4.3.5",
+  "items": [
+    "Fully revamped subscriptions and checkout.",
+    "Reliable background checkout with window fallback.",
+    "Reuse existing checkout tab, debounce clicks.",
+    "Fixed popup 'api is not defined'.",
+    "Safer DOM operations."
+  ]
+}

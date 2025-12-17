@@ -1,0 +1,1110 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>LifeUndo Settings</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      :root {
+        --bg: #020617;
+        --bg-elevated: #020617;
+        --panel: #020617;
+        --card: #020617;
+        --border: #1f2937;
+        --text: #e5e7eb;
+        --muted: #9ca3af;
+        --accent: #22c55e;
+        --accent-soft: rgba(34, 197, 94, 0.18);
+        --accent2: #0ea5e9;
+        --danger: #ef4444;
+        --radius-lg: 18px;
+        --radius-md: 12px;
+        --radius-pill: 999px;
+        --shadow-soft: 0 22px 60px rgba(15, 23, 42, 0.9);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: -apple-system, system-ui, Segoe UI, Roboto, Arial, sans-serif;
+        background: transparent;
+        color: var(--text);
+        min-height: 100vh;
+        display: flex;
+        justify-content: flex-end;
+        align-items: flex-start;
+      }
+
+      .shell {
+        width: 420px;
+        height: 640px;
+        margin: 8px 8px 8px 0;
+        border-radius: 24px;
+        border: 1px solid rgba(15, 23, 42, 0.9);
+        background:
+          radial-gradient(circle at top left, rgba(56, 189, 248, 0.18), transparent 55%),
+          radial-gradient(circle at bottom right, rgba(129, 140, 248, 0.28), transparent 60%), #020617;
+        display: flex;
+        flex-direction: column;
+        padding: 16px 18px 10px 18px;
+        box-sizing: border-box;
+      }
+
+      /* Header */
+
+      .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 18px;
+      }
+
+      .header-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .icon-btn {
+        width: 28px;
+        height: 28px;
+        border-radius: 999px;
+        border: 1px solid rgba(15, 23, 42, 0.9);
+        background: rgba(15, 23, 42, 0.96);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: #e5e7eb;
+        font-size: 14px;
+      }
+
+      .icon-btn:hover {
+        background: rgba(15, 23, 42, 1);
+      }
+
+      .header-title {
+        font-size: 16px;
+        font-weight: 600;
+      }
+
+      /* Body layout */
+
+      .body {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .sidebar {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .menu-card {
+        border-radius: 18px;
+        border: 1px solid rgba(15, 23, 42, 0.9);
+        background: rgba(15, 23, 42, 0.96);
+        padding: 10px 10px 8px 10px;
+      }
+
+      .sidebar-title {
+        font-size: 13px;
+        font-weight: 500;
+        color: #e5e7eb;
+        margin-bottom: 6px;
+      }
+
+      .tab-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .tab-btn {
+        border-radius: 999px;
+        border: 1px solid rgba(30, 41, 59, 0.9);
+        background: rgba(15, 23, 42, 0.9);
+        color: var(--muted);
+        font-size: 12px;
+        padding: 5px 14px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.16s ease, color 0.16s ease, border-color 0.16s ease;
+      }
+
+      .tab-btn.active {
+        border-color: rgba(34, 197, 94, 0.9);
+        background: rgba(15, 23, 42, 0.98);
+        color: #e5f9e7;
+      }
+
+      .tab-pill-count {
+        display: none;
+      }
+
+      .sidebar-footer {
+        display: none;
+      }
+
+      .more-text {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 4px;
+      }
+
+      .content {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .section-card {
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--border);
+        background:
+          radial-gradient(circle at top left, rgba(56, 189, 248, 0.16), transparent 60%),
+          radial-gradient(circle at bottom right, rgba(129, 140, 248, 0.22), transparent 60%),
+          rgba(15, 23, 42, 0.96);
+        padding: 12px 14px;
+      }
+
+      .section-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 8px;
+      }
+
+      .section-title {
+        font-size: 13px;
+        font-weight: 500;
+      }
+
+      .section-sub {
+        font-size: 11px;
+        color: var(--muted);
+      }
+
+      .section-tag {
+        font-size: 10px;
+        padding: 2px 6px;
+        border-radius: 999px;
+        border: 1px solid rgba(148, 163, 184, 0.5);
+        color: var(--muted);
+      }
+
+      .grid-2 {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 10px;
+        margin-top: 4px;
+      }
+
+      .tile {
+        border-radius: var(--radius-md);
+        border: 1px solid rgba(31, 41, 55, 0.9);
+        background: rgba(15, 23, 42, 0.98);
+        padding: 8px 10px;
+        font-size: 12px;
+      }
+
+      .tile-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 4px;
+      }
+
+      .tile-title {
+        font-weight: 500;
+        font-size: 12px;
+      }
+
+      .tile-sub {
+        font-size: 11px;
+        color: var(--muted);
+      }
+
+      .tile-footer {
+        margin-top: 6px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .badge-soft {
+        border-radius: 999px;
+        padding: 2px 8px;
+        border: 1px solid rgba(31, 41, 55, 0.9);
+        font-size: 10px;
+        color: var(--muted);
+        background: rgba(15, 23, 42, 0.95);
+      }
+
+      .badge-soft.ok {
+        border-color: rgba(34, 197, 94, 0.85);
+        color: #bbf7d0;
+        background: rgba(22, 163, 74, 0.14);
+      }
+
+      .badge-soft.warn {
+        border-color: rgba(234, 179, 8, 0.75);
+        color: #facc15;
+        background: rgba(161, 98, 7, 0.14);
+      }
+
+      .badge-soft.danger {
+        border-color: rgba(239, 68, 68, 0.76);
+        color: #fecaca;
+        background: rgba(127, 29, 29, 0.26);
+      }
+
+      .switch-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 6px 0;
+        border-bottom: 1px dashed rgba(31, 41, 55, 0.7);
+      }
+
+      .switch-row:last-child {
+        border-bottom: none;
+      }
+
+      .switch-main {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .switch-title {
+        font-size: 12px;
+      }
+
+      .switch-sub {
+        font-size: 11px;
+        color: var(--muted);
+      }
+
+      .toggle {
+        width: 36px;
+        height: 20px;
+        border-radius: 999px;
+        border: 1px solid rgba(75, 85, 99, 0.9);
+        background: rgba(15, 23, 42, 0.95);
+        position: relative;
+        cursor: pointer;
+        flex-shrink: 0;
+        transition: background 0.16s ease, border-color 0.16s ease;
+      }
+
+      .toggle-thumb {
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 14px;
+        height: 14px;
+        border-radius: 999px;
+        background: #9ca3af;
+        transition: transform 0.16s ease, background 0.16s ease;
+      }
+
+      .toggle.on {
+        background: linear-gradient(135deg, #22c55e, #0ea5e9);
+        border-color: rgba(34, 197, 94, 0.9);
+      }
+
+      .toggle.on .toggle-thumb {
+        transform: translateX(14px);
+        background: #e5e7eb;
+      }
+
+      .pill-row {
+        margin-top: 4px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        font-size: 11px;
+      }
+
+      .pill {
+        padding: 2px 9px;
+        border-radius: 999px;
+        border: 1px solid rgba(31, 41, 55, 0.9);
+        background: rgba(15, 23, 42, 0.95);
+        color: var(--muted);
+      }
+
+      /* Links & buttons */
+
+      .btn {
+        border-radius: 999px;
+        border: 1px solid rgba(31, 41, 55, 0.9);
+        background: rgba(15, 23, 42, 0.96);
+        color: #e5e7eb;
+        font-size: 12px;
+        padding: 6px 12px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: background 0.16s ease, transform 0.06s ease, box-shadow 0.16s ease;
+      }
+
+      .btn:hover {
+        background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.25), transparent 60%),
+          rgba(15, 23, 42, 0.98);
+        transform: translateY(1px);
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #22c55e, #0ea5e9);
+        border-color: rgba(34, 197, 94, 0.9);
+        color: #e5e7eb;
+        box-shadow: 0 10px 30px rgba(34, 197, 94, 0.35);
+      }
+
+      .btn-primary:hover {
+        filter: brightness(1.05);
+      }
+
+      .btn-outline {
+        background: transparent;
+        color: var(--muted);
+      }
+
+      .btn-sm {
+        padding: 4px 9px;
+        font-size: 11px;
+      }
+
+      .link-row {
+        margin-top: 6px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        font-size: 11px;
+      }
+
+      .link-pill {
+        padding: 3px 9px;
+        border-radius: 999px;
+        border: 1px solid rgba(31, 41, 55, 0.9);
+        background: rgba(15, 23, 42, 0.96);
+        color: var(--muted);
+        cursor: pointer;
+        text-decoration: none;
+      }
+
+      .link-pill:hover {
+        color: #e5e7eb;
+        border-color: rgba(148, 163, 184, 0.8);
+      }
+
+      .faq-item {
+        margin-bottom: 10px;
+        border-radius: var(--radius-md);
+        border: 1px solid rgba(31, 41, 55, 0.9);
+        background: rgba(15, 23, 42, 0.98);
+        padding: 8px 10px;
+        font-size: 12px;
+      }
+
+      .faq-q {
+        font-weight: 500;
+        margin-bottom: 4px;
+      }
+
+      .faq-a {
+        font-size: 11px;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+
+      /* Timeline capsule row */
+
+      .summary-row {
+        margin-top: 6px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        font-size: 11px;
+      }
+
+      .summary-pill {
+        padding: 3px 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(31, 41, 55, 0.9);
+        background: rgba(15, 23, 42, 0.96);
+        color: var(--muted);
+      }
+
+      /* Footer */
+
+      .footer {
+        margin-top: 10px;
+        padding: 8px 18px 6px 18px;
+        border-top: 1px solid rgba(30, 64, 175, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 11px;
+        color: #e5e7eb;
+        background:
+          linear-gradient(to top, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.55));
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        box-sizing: border-box;
+        border-radius: 14px 14px 0 0;
+      }
+
+      .footer-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .footer-link {
+        color: #e5e7eb;
+        text-decoration: none;
+        cursor: pointer;
+      }
+
+      .footer-link:hover {
+        text-decoration: underline;
+      }
+
+      /* Tab visibility */
+
+      .tab-panel {
+        display: none;
+      }
+
+      .tab-panel.active {
+        display: block;
+      }
+
+      @media (max-width: 480px) {
+        body {
+          padding: 0;
+          align-items: stretch;
+        }
+        .shell {
+          width: 100%;
+          height: 100vh;
+          border-radius: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <header class="header">
+        <div class="header-left">
+          <button id="btnSettingsBack" class="icon-btn" type="button">
+            
+          </button>
+          <div class="header-title" id="settingsTitle">Settings</div>
+        </div>
+        <button id="btnSettingsClose" class="icon-btn" type="button">
+          
+        </button>
+      </header>
+
+      <div class="body">
+        <aside class="sidebar">
+          <div class="menu-card">
+            <div class="sidebar-title" id="menuTitle">Menu</div>
+            <div class="tab-list">
+              <button class="tab-btn" data-tab="general">
+                <span id="tabGeneral">General</span>
+              </button>
+
+              <button class="tab-btn" data-tab="apps">
+                <span id="tabApps">Apps</span>
+              </button>
+              <button class="tab-btn" data-tab="subscription">
+                <span id="tabSub">Subscription</span>
+              </button>
+              <button class="tab-btn" data-tab="team">
+                <span id="tabTeam">TEAM</span>
+              </button>
+              <button class="tab-btn" data-tab="timeline">
+                <span id="tabTimeline">Activity</span>
+              </button>
+              <button class="tab-btn" data-tab="devices">
+                <span id="tabDevices">Devices</span>
+              </button>
+              <button class="tab-btn" data-tab="about">
+                <span id="tabAbout">About</span>
+              </button>
+              <button class="tab-btn" data-tab="zk">
+                <span id="tabZk">ZK</span>
+              </button>
+              <button class="tab-btn" data-tab="faq">
+                <span id="tabFaq">FAQ</span>
+              </button>
+            </div>
+          </div>
+          <div class="more-text" id="moreText">Additional sections will appear later.</div>
+        </aside>
+
+        <main class="content">
+          <!-- General -->
+          <section id="panelGeneral" class="tab-panel">
+            <div class="section-card">
+              <div class="section-header">
+                <div>
+                  <div class="section-title" id="generalTitle">General</div>
+                  <div class="section-sub" id="generalSub">
+                    Language, visibility and event mode for this extension.
+                  </div>
+                </div>
+                <div class="section-tag" id="generalTag">Local only</div>
+              </div>
+
+              <div class="switch-row">
+                <div class="switch-main">
+                  <div class="switch-title" id="lblLang">Language</div>
+                  <div class="switch-sub" id="lblLangSub">
+                    Follows your choice here and in desktop client.
+                  </div>
+                </div>
+                <div class="pill-row">
+                  <span class="pill" id="pillLangCurrent">Auto / English</span>
+                </div>
+              </div>
+
+              <div class="switch-row">
+                <div class="switch-main">
+                  <div class="switch-title" id="lblShowHere">Show list here</div>
+                  <div class="switch-sub" id="lblShowHereSub">
+                    Recent tabs list opens directly in popup instead of mini‑drawer.
+                  </div>
+                </div>
+                <button id="tgShowHere" type="button" class="toggle">
+                  <div class="toggle-thumb"></div>
+                </button>
+              </div>
+
+              <div class="switch-row">
+                <div class="switch-main">
+                  <div class="switch-title" id="lblScreens">Screenshots</div>
+                  <div class="switch-sub" id="lblScreensSub">
+                    Keep screenshot pipeline ready for desktop Mesh companion.
+                  </div>
+                </div>
+                <button id="tgScreens" type="button" class="toggle on">
+                  <div class="toggle-thumb"></div>
+                </button>
+              </div>
+
+              <div class="switch-row">
+                <div class="switch-main">
+                  <div class="switch-title" id="lblEvent">Event mode</div>
+                  <div class="switch-sub" id="lblEventSub">
+                    Hide sensitive controls and show QR‑style views for demos and events.
+                  </div>
+                </div>
+                <button id="tgEvent" type="button" class="toggle">
+                  <div class="toggle-thumb"></div>
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <!-- Apps -->
+          <section id="panelApps" class="tab-panel">
+            <div class="section-card">
+              <div class="section-header">
+                <div>
+                  <div class="section-title" id="appsTitle">Apps and devices</div>
+                  <div class="section-sub" id="appsSub">
+                    Install LifeUndo Mesh on desktop and mobile for full TEAM experience.
+                  </div>
+                </div>
+                <div class="section-tag" id="appsTag">Mesh family</div>
+              </div>
+
+              <div class="grid-2">
+                <div class="tile">
+                  <div class="tile-header">
+                    <div class="tile-title" id="appsBrowserTitle">Browser extensions</div>
+                    <span class="badge-soft ok" id="appsBrowserBadge">This browser</span>
+                  </div>
+                  <div class="tile-sub" id="appsBrowserText">
+                    Chromium and Firefox extensions share the same TEAM and history limits as your
+                    desktop client.
+                  </div>
+                  <div class="tile-footer">
+                    <button id="btnChromeWebStore" class="btn btn-sm btn-outline">Chrome Web
+                      Store</button>
+                    <button id="btnFirefoxAddons" class="btn btn-sm btn-outline">Firefox Add‑ons</button>
+                  </div>
+                </div>
+
+                <div class="tile">
+                  <div class="tile-header">
+                    <div class="tile-title" id="appsDesktopTitle">Windows desktop</div>
+                    <span class="badge-soft ok" id="appsDesktopBadge">GOLD 0.6.1.2</span>
+                  </div>
+                  <div class="tile-sub" id="appsDesktopText">
+                    Full Mesh client with TEAM 5, device slots and admin console. Extension follows
+                    its status.
+                  </div>
+                  <div class="tile-footer">
+                    <button id="btnWinDownload" class="btn btn-sm btn-primary">Download
+                      desktop</button>
+                    <button id="btnWinReleases" class="btn btn-sm btn-outline">All releases</button>
+                  </div>
+                </div>
+
+                <div class="tile">
+                  <div class="tile-header">
+                    <div class="tile-title" id="appsAndroidTitle">Android</div>
+                    <span class="badge-soft warn" id="appsAndroidBadge">beta</span>
+                  </div>
+                  <div class="tile-sub" id="appsAndroidText">
+                    Companion app for tabs, screenshots and clipboard on the go. Connects to the
+                    same TEAM.
+                  </div>
+                  <div class="tile-footer">
+                    <button id="btnRuStore" class="btn btn-sm btn-outline">RuStore</button>
+                    <button id="btnAndroidApk" class="btn btn-sm btn-outline">Direct APK</button>
+                  </div>
+                </div>
+
+                <div class="tile">
+                  <div class="tile-header">
+                    <div class="tile-title" id="appsOtherTitle">Other platforms</div>
+                    <span class="badge-soft" id="appsOtherBadge">Roadmap</span>
+                  </div>
+                  <div class="tile-sub" id="appsOtherText">
+                    iOS, macOS and Linux companions join Mesh later. All will share TEAM 5 and the
+                    same backend.
+                  </div>
+                  <div class="tile-footer">
+                    <button id="btnAppsRoadmap" class="btn btn-sm btn-outline">Roadmap /
+                      status</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Subscription -->
+          <section id="panelSubscription" class="tab-panel">
+            <div class="section-card">
+              <div class="section-header">
+                <div>
+                  <div class="section-title" id="subTitle">Subscription</div>
+                  <div class="section-sub" id="subSub">
+                    TEAM plan with 5 device slots and unified billing.
+                  </div>
+                </div>
+                <div class="section-tag" id="subTag">Billing on getlifeundo.com</div>
+              </div>
+
+              <div class="grid-2">
+                <div class="tile">
+                  <div class="tile-header">
+                    <div class="tile-title" id="subPlanTitle">Current plan</div>
+                    <span class="badge-soft ok" id="subPlanBadge">TEAM 5</span>
+                  </div>
+                  <div class="tile-sub" id="subPlanText">
+                    Status and limits are managed by the same backend as your desktop client.
+                    Extension never stores billing data locally.
+                  </div>
+                  <div class="pill-row">
+                    <span class="pill" id="pillSubDevices">Up to 5 devices per TEAM.</span>
+                    <span class="pill" id="pillSubKeys">Multiple license keys for users and
+                      workstations.</span>
+                    <span class="pill" id="pillSubUnified">Unified status across desktop and
+                      browsers.</span>
+                  </div>
+                </div>
+
+                <div class="tile">
+                  <div class="tile-header">
+                    <div class="tile-title" id="subManageTitle">Manage subscription</div>
+                    <span class="badge-soft" id="subManageBadge">Account center</span>
+                  </div>
+                  <div class="tile-sub" id="subManageText">
+                    Open your account to manage payment method, invoices, TEAM members and device
+                    slots. Changes apply to this extension automatically.
+                  </div>
+                  <div class="tile-footer">
+                    <button id="btnSubPortal" class="btn btn-sm btn-primary">Open account</button>
+                    <button id="btnSubStatus" class="btn btn-sm btn-outline">Refresh
+                      status</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- TEAM -->
+          <section id="panelTeam" class="tab-panel">
+            <div class="section-card">
+              <div class="section-header">
+                <div>
+                  <div class="section-title" id="teamTitle">TEAM and devices</div>
+                  <div class="section-sub" id="teamSub">
+                    TEAM 5, device slots and admin tools shared with desktop Mesh.
+                  </div>
+                </div>
+                <div class="section-tag" id="teamTag">Backend‑driven</div>
+              </div>
+
+              <div class="grid-2">
+                <div class="tile">
+                  <div class="tile-header">
+                    <div class="tile-title" id="teamSlotsTitle">Device slots</div>
+                    <span class="badge-soft ok" id="teamSlotsBadge">5 devices</span>
+                  </div>
+                  <div class="tile-sub" id="teamSlotsText">
+                    Desktop, laptop, work PC and two browsers can live under the same TEAM. Slots
+                    are managed in admin panel, not inside extensions.
+                  </div>
+                  <div class="summary-row">
+                    <span class="summary-pill" id="pillSlotsExample">Example: 2 desktops + 3
+                      browsers.</span>
+                    <span class="summary-pill" id="pillSlotsSync">Status synced automatically.</span>
+                  </div>
+                </div>
+
+                <div class="tile">
+                  <div class="tile-header">
+                    <div class="tile-title" id="teamKeysTitle">License keys</div>
+                    <span class="badge-soft" id="teamKeysBadge">Dozens per TEAM</span>
+                  </div>
+                  <div class="tile-sub" id="teamKeysText">
+                    Keys are issued for people or workstations. They stay in backend; extensions
+                    only see final TEAM status (free or team).
+                  </div>
+                  <div class="summary-row">
+                    <span class="summary-pill" id="pillKeysB2B">B2B / B2G friendly structure.</span>
+                    <span class="summary-pill" id="pillKeysAudit">Audit trail in admin panel.</span>
+                  </div>
+                </div>
+
+                <div class="tile">
+                  <div class="tile-header">
+                    <div class="tile-title" id="teamAdminTitle">Admin console</div>
+                    <span class="badge-soft" id="teamAdminBadge">Web</span>
+                  </div>
+                  <div class="tile-sub" id="teamAdminText">
+                    Admin adds devices, rotates keys and reviews activity. Extensions never modify
+                    TEAM graph directly.
+                  </div>
+                  <div class="tile-footer">
+                    <button id="btnTeamAdmin" class="btn btn-sm btn-outline">Open TEAM
+                      admin</button>
+                  </div>
+                </div>
+
+                <div class="tile">
+                  <div class="tile-header">
+                    <div class="tile-title" id="teamPrivacyTitle">What stays local</div>
+                    <span class="badge-soft" id="teamPrivacyBadge">Privacy</span>
+                  </div>
+                  <div class="tile-sub" id="teamPrivacyText">
+                    Tabs, screenshots and text history are stored locally or on your desktop Mesh.
+                    TEAM backend only knows aggregate limits and status.
+                  </div>
+                  <div class="summary-row">
+                    <span class="summary-pill" id="pillLocalStore">Default: local
+                      storage.</span>
+                    <span class="summary-pill" id="pillExport">You control exports.</span>
+                  </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Timeline / Activity -->
+          <section id="panelTimeline" class="tab-panel">
+            <div class="section-card">
+              <div class="section-header">
+                <div>
+                  <div class="section-title" id="timelineTitle">Timeline & activity</div>
+                  <div class="section-sub" id="timelineSub">
+                    Shortcuts and exports for tabs, screenshots and text history.
+                  </div>
+                </div>
+                <div class="section-tag" id="timelineTag">Local data</div>
+                <span class="badge-soft" id="timelineZkBadge">ZK: unknown</span>
+              </div>
+
+              <div class="grid-2">
+                <div class="tile">
+                  <div class="tile-header">
+                    <div class="tile-title" id="timelineTabsTitle">Tabs</div>
+                    <span class="badge-soft" id="timelineTabsBadge">Recent</span>
+                  </div>
+                  <div class="tile-sub" id="timelineTabsText">
+                    Open or export recently closed tabs. Desktop client can reuse the same list for
+                    Mesh actions.
+                  </div>
+                  <div class="tile-footer">
+                    <button id="btnOpenRecentTabs" class="btn btn-sm btn-outline">Open recent</button>
+                    <button id="btnExportRecentTabs" class="btn btn-sm btn-outline">Export
+                      list</button>
+                  </div>
+                </div>
+
+                <div class="tile">
+                  <div class="tile-header">
+                    <div class="tile-title" id="timelineTextTitle">Text</div>
+                    <span class="badge-soft" id="timelineTextBadge">History</span>
+                  </div>
+                  <div class="tile-sub" id="timelineTextText">
+                    Recover last typed snippets, export history or clear it before presentations and
+                    events.
+                  </div>
+                  <div class="tile-footer">
+                    <button id="btnCopyLastText" class="btn btn-sm btn-outline">Copy last</button>
+                    <button id="btnExportText" class="btn btn-sm btn-outline">Export text</button>
+                    <button id="btnClearText" class="btn btn-sm btn-outline">Clear</button>
+                  </div>
+                </div>
+
+                <div class="tile">
+                  <div class="tile-header">
+                    <div class="tile-title" id="timelineScreensTitle">Screenshots</div>
+                    <span class="badge-soft" id="timelineScreensBadge">Companion</span>
+                  </div>
+                  <div class="tile-sub" id="timelineScreensText">
+                    Screenshot flow primarily lives in desktop Mesh, but extension can trigger and
+                    list recent captures where supported.
+                  </div>
+                  <div class="tile-footer">
+                    <button id="btnCaptureScreen" class="btn btn-sm btn-outline">Capture</button>
+                    <button id="btnExportScreens" class="btn btn-sm btn-outline">Export</button>
+                    <button id="btnClearScreens" class="btn btn-sm btn-outline">Clear</button>
+                  </div>
+                </div>
+
+                <div class="tile">
+                  <div class="tile-header">
+                    <div class="tile-title" id="timelineLogsTitle">Diagnostics</div>
+                    <span class="badge-soft" id="timelineLogsBadge">Support</span>
+                  </div>
+                  <div class="tile-sub" id="timelineLogsText">
+                    Export minimal logs or stats when support asks, without sending private
+                    contents.
+                  </div>
+                  <div class="tile-footer">
+                    <button id="btnExportLogs" class="btn btn-sm btn-outline">Export logs</button>
+                    <button id="btnClearLogs" class="btn btn-sm btn-outline">Clear logs</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="summary-row">
+                <span class="summary-pill" id="timelineSummaryTabs">Tabs: local history in this
+                  browser.</span>
+                <span class="summary-pill" id="timelineSummaryScreens">Screens: via desktop
+                  Mesh.</span>
+                <span class="summary-pill" id="timelineSummaryText">Text: per‑device, per‑profile.</span>
+              </div>
+
+              <div id="timelineFlash" class="flash"></div>
+            </div>
+          </section>
+
+          <!-- ZK / ZK-TempMem debug -->
+          <section id="panelZk" class="tab-panel">
+            <div class="section-card">
+              <div class="section-header">
+                <div>
+                  <div class="section-title" id="zkTitle">ZK / secure journal</div>
+                  <div class="section-sub" id="zkSub">
+                    Local encrypted ZK-TempMem for this browser profile. Master password and session control.
+                  </div>
+                </div>
+                <div class="section-tag" id="zkTag">Local only</div>
+              </div>
+
+              <div class="grid-2">
+                <div class="tile">
+                  <div class="tile-header">
+                    <div class="tile-title" id="zkStatusTitle">Status</div>
+                    <span class="badge-soft" id="zkStatusBadge">Locked</span>
+                  </div>
+                  <div class="tile-sub" id="zkStatusText">
+                    ZK master password protects access to the encrypted journal. Without it, entries stay on disk but cannot be inspected from UI.
+                  </div>
+                  <div class="pill-row">
+                    <span class="pill" id="zkStatusSession">Session: inactive</span>
+                  </div>
+                </div>
+
+                <div class="tile">
+                  <div class="tile-header">
+                    <div class="tile-title" id="zkCreateTitle">Create or change master password</div>
+                  </div>
+                  <div class="tile-sub" id="zkCreateText">
+                    This password is local to this browser profile. We store only SHA-256(password+salt). If you forget it, ZK contents cannot be recovered.
+                  </div>
+                  <div class="tile-footer" style="flex-direction:column;gap:6px;">
+                    <input id="zkNewPassword" type="password" placeholder="New master password" style="width:100%;padding:6px 8px;border-radius:999px;border:1px solid rgba(31,41,55,0.9);background:rgba(15,23,42,0.96);color:#e5e7eb;font-size:12px;" />
+                    <button id="btnZkSetPassword" class="btn btn-sm btn-primary">Save master password</button>
+                  </div>
+                </div>
+
+                <div class="tile">
+                  <div class="tile-header">
+                    <div class="tile-title" id="zkUnlockTitle">Unlock ZK session</div>
+                  </div>
+                  <div class="tile-sub" id="zkUnlockText">
+                    Enter your ZK master password to start a temporary session. During the session, you can inspect recent ZK entries and export a .luzk snapshot.
+                  </div>
+                  <div class="tile-footer" style="flex-direction:column;gap:6px;">
+                    <input id="zkUnlockPassword" type="password" placeholder="Master password" style="width:100%;padding:6px 8px;border-radius:999px;border:1px solid rgba(31,41,55,0.9);background:rgba(15,23,42,0.96);color:#e5e7eb;font-size:12px;" />
+                    <button id="btnZkUnlock" class="btn btn-sm btn-outline">Unlock ZK for 15 minutes</button>
+                    <div id="zkError" class="faq-a" style="color:#fca5a5;margin-top:2px;"></div>
+                  </div>
+                </div>
+
+                <div class="tile">
+                  <div class="tile-header">
+                    <div class="tile-title" id="zkEntriesTitle">Recent ZK entries</div>
+                  </div>
+                  <div class="tile-sub" id="zkEntriesText">
+                    After unlocking, you will see a short list of recent encrypted ZK entries (kind, time and short preview).
+                  </div>
+                  <div class="tile-footer" style="flex-direction:column;gap:6px;">
+                    <button id="btnZkReload" class="btn btn-sm btn-outline">Reload list</button>
+                    <button id="btnZkExport" class="btn btn-sm btn-primary">Export .luzk snapshot</button>
+                    <ul id="zkEntriesList" style="margin:4px 0 0 0;padding-left:16px;font-size:11px;max-height:140px;overflow:auto;"></ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- About -->
+          <section id="panelAbout" class="tab-panel">
+            <div class="section-card">
+              <div class="section-header">
+                <div>
+                  <div class="section-title" id="aboutTitle">About LifeUndo</div>
+                  <div class="section-sub" id="aboutSub">
+                    LifeUndo is a family of Mesh clients — desktop, browsers and mobile — running under one TEAM plan. The desktop GOLD 0.6.1.2 build is the primary client; extensions and mobile companions follow its status.
+                  </div>
+                </div>
+                <div class="section-tag" id="aboutTag">Version & links</div>
+              </div>
+
+              <div class="tile">
+                <div class="tile-sub" id="aboutVersionText">
+                  Extension version <span id="aboutVersionValue">0.0.0</span> follows the same line as Windows GOLD 0.6.1.2. Some Mesh features may appear earlier on desktop.
+                </div>
+              </div>
+
+              <div class="tile">
+                <div class="tile-header">
+                  <div class="tile-title" id="aboutSocialTitle">Social</div>
+                </div>
+                <div class="tile-sub" id="aboutSocialText">
+                  Telegram, VK, X, YouTube, Firefox Add-ons, GitHub and RuStore — updates and release breakdowns.
+                </div>
+                <div class="grid-2" style="margin-top:8px;gap:8px;">
+                  <a class="btn btn-sm btn-outline" href="https://t.me/getlifeundo" target="_blank">Telegram</a>
+                  <a class="btn btn-sm btn-outline" href="https://vk.ru/GetLifeUndo" target="_blank">VK</a>
+                  <a class="btn btn-sm btn-outline" href="https://x.com/getlifeundo" target="_blank">X</a>
+                  <a class="btn btn-sm btn-outline" href="https://youtube.com/@getlifeundo" target="_blank">YouTube</a>
+                  <a class="btn btn-sm btn-outline" href="https://addons.mozilla.org" target="_blank">Firefox</a>
+                  <a class="btn btn-sm btn-outline" href="https://github.com/LifeUndo" target="_blank">GitHub</a>
+                  <a class="btn btn-sm btn-outline" href="https://reddit.com/r/getlifeundo" target="_blank">Reddit</a>
+                  <a class="btn btn-sm btn-outline" href="https://rustore.ru" target="_blank">RuStore</a>
+                </div>
+                <div class="tile-footer" style="margin-top:10px;">
+                  <button id="btnAboutShare" class="btn btn-sm btn-primary">Share GetLifeUndo</button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- FAQ -->
+          <section id="panelFaq" class="tab-panel">
+            <div class="section-card">
+              <div class="section-header">
+                <div>
+                  <div class="section-title" id="faqTitle">FAQ</div>
+                  <div class="section-sub" id="faqSub">
+                    Short answers about TEAM, devices, privacy and Mesh behaviour.
+                  </div>
+                </div>
+                <div class="section-tag" id="faqTag">Same as desktop</div>
+              </div>
+
+              <div class="faq-item">
+                <div class="faq-q" id="faqQ1">What is TEAM 5?</div>
+                <div class="faq-a" id="faqA1">
+                  TEAM 5 is a license with up to five devices in one TEAM: desktops, laptops and
+                  browsers. Extension receives a simple “team / free” status from backend and
+                  follows the same limits as desktop Mesh.
+                </div>
+              </div>
+
+              <div class="faq-item">
+                <div class="faq-q" id="faqQ2">Where is my data stored?</div>
+                <div class="faq-a" id="faqA2">
+                  By default, tabs, screenshots and text history are stored locally on your devices
+                  or in desktop Mesh, not in a central cloud. TEAM backend only manages licenses,
+                  device slots and billing, not the contents of your history.
+                </div>
+              </div>
+
+              <div class="faq-item">
+                <div class="faq-q" id="faqQ3">How do desktop and extension stay in sync?</div>
+                <div class="faq-a" id="faqA3">
+                  Both desktop client and extensions talk to the same backend for TEAM status and
+                  limits. When admin changes devices or TEAM plan, this extension refreshes its
+                  state and UI on next check without manual re‑activation.
+                </div>
+              </div>
+
+              <div class="faq-item">
+                <div class="faq-q" id="faqQ4">Can I use this extension without desktop?</div>
+                <div class="faq-a" id="faqA4">
+                  Yes. You can run it in “local only” mode with undo for tabs and text. TEAM 5 and
+                  Mesh features unlock extra flows when desktop, mobile and extension work
+                  together.
+                </div>
+              </div>
+            </div>
+          </section>
+        </main>
+      </div>
+
+      <footer class="footer">
+        <div class="footer-links">
+          <span id="ftSite" class="footer-link">Site</span>
+          <span id="ftGitHub" class="footer-link">GitHub</span>
+          <span id="ftPrivacy" class="footer-link">Privacy</span>
+          <span id="ftOffer" class="footer-link">Offer</span>
+        </div>
+        <div>GetLifeUndo™</div>
+      </footer>
+    </div>
+
+    <script src="licenseCore.js"></script>
+    <script src="telemetry.js"></script>
+    <script src="options.js"></script>
+  </body>
+</html>

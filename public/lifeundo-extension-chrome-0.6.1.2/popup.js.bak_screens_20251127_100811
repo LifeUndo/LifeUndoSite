@@ -1,0 +1,1158 @@
+// Главная страница попапа 1:1 с Windows GOLD (герой + "Что умеет" + футер)
+
+const api = window.browser || window.chrome;
+
+const $ = (id) => document.getElementById(id);
+
+let currentLang = 'ru';
+
+// состояние триала / плана: { mode: 'trial'|'team', days:number, hours:number }
+let trialState = null;
+
+function renderTrialCapsule() {
+  const el = $('ppTrial');
+  if (!el) return;
+
+  if (!trialState) {
+    el.textContent = currentLang === 'ru' ? 'ТРИАЛ' : 'TRIAL';
+    return;
+  }
+
+  if (trialState.mode === 'team') {
+    el.textContent = 'TEAM';
+    return;
+  }
+
+  const d = Math.max(0, trialState.days || 0);
+  const h = Math.max(0, trialState.hours || 0);
+  if (currentLang === 'ru') {
+    el.textContent = `ТРИАЛ ${d}д ${h}ч`;
+  } else {
+    el.textContent = `TRIAL ${d}d ${h}h`;
+  }
+}
+
+function applyLang() {
+  const ru = currentLang === 'ru';
+
+  // кнопки языка
+  $('ppLangRu').classList.toggle('active', ru);
+  $('ppLangEn').classList.toggle('active', !ru);
+
+  const hero = document.getElementById('heroContainer');
+  if (!hero) return;
+
+  if (ru) {
+    hero.innerHTML = `
+      <div class="hero-title">Потеряли текст? Закрыли вкладку? Ctrl+Z вернёт всё обратно.</div>
+      <div class="hero-sub">Восстанавливайте формы, вкладки и буфер обмена. 100% локально, без облака и слежки.</div>
+
+      <section class="card">
+        <div class="card-header">Что умеет:</div>
+        <ul class="card-list">
+          <li>История ввода в формах. Если страница перезагрузилась или вкладка закрылась, вы возвращаете последний введённый текст и продолжаете с того же места.</li>
+          <li>История буфера обмена. Хронология скопированных фрагментов позволяет вставить любой предыдущий элемент без повторного поиска.</li>
+          <li>Недавние вкладки. Быстрый доступ к недавно закрытым страницам и переход обратно в один тап.</li>
+          <li>Быстрые скриншоты с превью. Делайте снимки экрана и мгновенно возвращайтесь к работе; изображения сохраняются локально.</li>
+          <li>Локальное хранение. Все данные находятся только на вашем устройстве и удаляются вместе с приложением.</li>
+          <li>Без аккаунтов и регистрации. Установили — и пользуетесь.</li>
+          <li>Без интернета. Основные функции работают офлайн; приложение не отправляет информацию на внешние сервера.</li>
+          <li>Без рекламы и трекинга. Нет рекламных SDK, аналитики и скрытых сборов данных.</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <div class="card-header">Зачем это нужно:</div>
+        <ul class="card-list">
+          <li>Подстраховка при длинных формах, комментариях, сообщениях и заявках — если страница «упала» или «выкинула», текст не пропадёт.</li>
+          <li>Ускорение повседневной работы: удобная история буфера обмена и быстрые скриншоты экономят время.</li>
+          <li>Приватность по умолчанию: информация не покидает ваше устройство.</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <div class="card-header">Принципы приватности:</div>
+        <ul class="card-list">
+          <li>Приложение не запрашивает лишних разрешений и не использует сторонние трекеры.</li>
+          <li>Данные не передаются на сервера разработчика или третьих лиц.</li>
+          <li>При удалении приложения вся локальная история полностью очищается.</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <div class="card-header">Примечания:</div>
+        <ul class="card-list">
+          <li>Приложение не требует учётной записи и работает локально.</li>
+          <li>Список возможностей будет расширяться; акцент — на надёжность, приватность и удобство.</li>
+        </ul>
+        <div class="card-list" style="list-style:none;padding-left:0;margin-top:6px;font-size:12px;color:#cbd5f5;">
+          В приложении есть подписка.
+        </div>
+      </section>
+    `;
+
+    $('ftSite').textContent = 'Сайт';
+    $('ftGitHub').textContent = 'GitHub';
+    $('ftPrivacy').textContent = 'Приватность';
+    $('ftOffer').textContent = 'Оферта';
+  } else {
+    hero.innerHTML = `
+      <div class="hero-title">Lost text? Closed a tab? Ctrl+Z brings it back.</div>
+      <div class="hero-sub">Restore forms, tabs, and clipboard. 100% local — no cloud, no tracking.</div>
+
+      <section class="card">
+        <div class="card-header">What it does:</div>
+        <ul class="card-list">
+          <li>Form input history. If a page reloads or a tab is closed, you restore the last entered text and continue from the same place.</li>
+          <li>Clipboard history. A timeline of copied fragments lets you paste any previous item without re‑searching.</li>
+          <li>Recent tabs. Quick access to recently closed pages and one‑tap return.</li>
+          <li>Quick screenshots with preview. Take captures and jump back instantly; images are stored locally.</li>
+          <li>Local storage. All data stays on your device and is removed together with the app.</li>
+          <li>No accounts or registration. Install — and use.</li>
+          <li>No internet required. Core features work offline; the app does not send information to external servers.</li>
+          <li>No ads or tracking. No ad SDKs, analytics, or hidden data collection.</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <div class="card-header">Why it matters:</div>
+        <ul class="card-list">
+          <li>Safety net for long forms, comments, messages, and applications — if a page "crashes" or "kicks you out", your text won’t be lost.</li>
+          <li>Faster everyday work: convenient clipboard history and quick screenshots save time.</li>
+          <li>Privacy by default: your information never leaves the device.</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <div class="card-header">Privacy principles:</div>
+        <ul class="card-list">
+          <li>The app requests no unnecessary permissions and uses no third‑party trackers.</li>
+          <li>Data is not transferred to the developer’s servers or to any third parties.</li>
+          <li>When the app is removed, all local history is fully erased.</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <div class="card-header">Notes:</div>
+        <ul class="card-list">
+          <li>The app does not require an account and works locally.</li>
+          <li>The feature list will grow; the focus is reliability, privacy and convenience.</li>
+        </ul>
+        <div class="card-list" style="list-style:none;padding-left:0;margin-top:6px;font-size:12px;color:#cbd5f5;">
+          The app includes a subscription.
+        </div>
+      </section>
+    `;
+
+    $('ftSite').textContent = 'Website';
+    $('ftGitHub').textContent = 'GitHub';
+    $('ftPrivacy').textContent = 'Privacy';
+    $('ftOffer').textContent = 'Offer';
+  }
+
+  // капсулы версии/триала
+  renderTrialCapsule();
+
+  // Настройки: заголовок меню и разделов
+  const stMenuTitle = $('stMenuTitle');
+  if (stMenuTitle) stMenuTitle.textContent = ru ? 'Меню' : 'Menu';
+
+  // подписи кнопок вкладок настроек
+  const tabGeneral = $('stTabGeneral');
+  const tabSub = $('stTabSub');
+  const tabApps = $('stTabApps');
+  const tabAbout = $('stTabAbout');
+  const tabFaq = $('stTabFaq');
+  const tabActivity = $('stTabActivity');
+  const tabDevices = $('stTabDevices');
+  const tabTeam = $('stTabTeam');
+
+  if (tabGeneral) tabGeneral.textContent = ru ? 'Общее' : 'General';
+  if (tabSub) tabSub.textContent = ru ? 'Подписка' : 'Subscription';
+  if (tabApps) tabApps.textContent = ru ? 'Приложения' : 'Apps';
+  if (tabAbout) tabAbout.textContent = ru ? 'О нас' : 'About';
+  if (tabFaq) tabFaq.textContent = 'FAQ';
+  if (tabActivity) tabActivity.textContent = ru ? 'Лента' : 'Timeline';
+  if (tabDevices) tabDevices.textContent = ru ? 'Устройства' : 'Devices';
+  if (tabTeam) tabTeam.textContent = 'TEAM';
+
+  const stPanelGeneral = $('stPanelGeneral');
+  if (stPanelGeneral) {
+    const title = stPanelGeneral.querySelector('.settings-section-title');
+    const sub = stPanelGeneral.querySelector('.settings-section-sub');
+    const langTitle = stPanelGeneral.querySelector('.stg-card-title');
+    const emailTitle = stPanelGeneral.querySelectorAll('.stg-card-title')[1];
+    const emailNote = stPanelGeneral.querySelector('.stg-email-note');
+    const emailBtn = $('stGenEmailSave');
+    const emailInput = $('stGenEmail');
+
+    if (title) title.textContent = ru ? 'Общие настройки' : 'General settings';
+    if (sub)
+      sub.textContent = ru
+        ? 'Язык интерфейса, отображение списка внутри окна и базовые режимы работы.'
+        : 'Interface language, in-window list view and basic modes.';
+    if (langTitle) langTitle.textContent = ru ? 'Язык' : 'Language';
+    if (emailTitle) emailTitle.textContent = ru ? 'Email для аккаунта' : 'Account email';
+    if (emailNote)
+      emailNote.textContent = ru
+        ? 'Используется для триала, подписки и привязки устройств. Укажите рабочий адрес. В браузерном расширении email сохраняется локально и будет использован десктоп‑клиентом.'
+        : 'Used for trial, subscription and device linking. Provide a work address. In the browser extension the email is stored locally and will be used by the desktop client later.';
+    if (emailBtn) emailBtn.textContent = ru ? 'Отправить' : 'Send';
+    if (emailInput)
+      emailInput.placeholder = ru ? 'you@example.com' : 'you@example.com';
+
+    // подписи переключателей в Общих (showHere / shots / video / eventMode)
+    const rowShowHere = $('stGenShowHere')?.closest('.stg-row');
+    const rowShots = $('stGenShots')?.closest('.stg-row');
+    const rowVideo = $('stGenVideo')?.closest('.stg-row');
+    const rowEvent = $('stGenEvent')?.closest('.stg-row');
+
+    function setLabel(row, textRu, textEn, titleRu, titleEn) {
+      if (!row) return;
+      const lbl = row.querySelector('.stg-row-label');
+      const hint = row.querySelector('.stg-hint');
+      if (lbl) {
+        const txt = ru ? textRu : textEn;
+        // первый текстовый узел внутри label — сама надпись, оставляем span с "!" как есть
+        if (lbl.firstChild) {
+          if (lbl.firstChild.nodeType === Node.TEXT_NODE) {
+            lbl.firstChild.textContent = txt + ' ';
+          } else {
+            lbl.insertBefore(document.createTextNode(txt + ' '), lbl.firstChild);
+          }
+        } else {
+          lbl.appendChild(document.createTextNode(txt + ' '));
+        }
+      }
+      if (hint)
+        hint.setAttribute('title', ru ? titleRu : titleEn);
+    }
+
+    setLabel(
+      rowShowHere,
+      'Показывать список здесь',
+      'Show list here',
+      'Показывать список внутри окна приложения',
+      'Show the list inside the app window'
+    );
+    setLabel(
+      rowShots,
+      'Скриншоты',
+      'Screenshots',
+      'Автоматически сохранять скриншоты',
+      'Automatically capture screenshots'
+    );
+    setLabel(
+      rowVideo,
+      'Видео',
+      'Video',
+      'Запись короткого видео (позже)',
+      'Capture short videos (later)'
+    );
+    setLabel(
+      rowEvent,
+      'Режим событий',
+      'Event mode',
+      'Экспериментальный режим, фиксирует только важные события',
+      'Experimental mode, captures only important events'
+    );
+
+    // Подписка / Subscription
+    const stPanelSub = $('stPanelSubscription');
+    if (stPanelSub) {
+      const subTitle = $('subTitle');
+      const subSub = $('subSub');
+      const subStatusLabel = $('subStatusLabel');
+      const subStatusValue = $('subStatusValue');
+      const subProTitle = $('subProTitle');
+      const subProPrice = $('subProPrice');
+      const subVipTitle = $('subVipTitle');
+      const subVipPrice = $('subVipPrice');
+      const subTeamTitle = $('subTeamTitle');
+      const subTeamPrice = $('subTeamPrice');
+      const btnSubPro = $('btnSubPro');
+      const btnSubVip = $('btnSubVip');
+      const btnSubTeam = $('btnSubTeam');
+
+      if (subTitle) subTitle.textContent = ru ? 'Подписка' : 'Subscription';
+      if (subSub)
+        subSub.textContent = ru
+          ? 'Тарифы PRO, VIP и TEAM 5 для персонального и командного использования.'
+          : 'PRO, VIP and TEAM 5 plans for personal and team use.';
+
+      if (subStatusLabel) subStatusLabel.textContent = ru ? 'Статус' : 'Status';
+      if (subStatusValue) subStatusValue.textContent = ru ? 'Не активна' : 'Not activated';
+
+      if (subProTitle)
+        subProTitle.textContent = ru
+          ? 'PRO (месяц, для одного пользователя)'
+          : 'PRO (monthly, single user)';
+      if (subProPrice) subProPrice.textContent = ru ? 'ежемесячно' : 'per month';
+      if (btnSubPro)
+        btnSubPro.textContent = ru ? 'Оплатить — ₽599' : 'Pay — ₽599';
+
+      if (subVipTitle)
+        subVipTitle.textContent = ru
+          ? 'VIP (пожизненно, для одного пользователя)'
+          : 'VIP (lifetime, single user)';
+      if (subVipPrice) subVipPrice.textContent = ru ? 'единовременно' : 'one-time';
+      if (btnSubVip)
+        btnSubVip.textContent = ru ? 'Оплатить — ₽9990' : 'Pay — ₽9990';
+
+      if (subTeamTitle)
+        subTeamTitle.textContent = ru
+          ? 'TEAM 5 (для команд и организаций)'
+          : 'TEAM 5 (teams & organisations)';
+      if (subTeamPrice) subTeamPrice.textContent = ru ? '5 мест / месяц' : '5 seats / month';
+      if (btnSubTeam)
+        btnSubTeam.textContent = ru ? 'Оплатить — ₽2990' : 'Pay — ₽2990';
+    }
+
+    // Apps
+    const stPanelApps = $('stPanelApps');
+    if (stPanelApps) {
+      const appsTitle = $('appsTitle');
+      const appsSub = $('appsSub');
+      const appsDesktopTitle = $('appsDesktopTitle');
+      const appsDesktopWin = $('appsDesktopWin');
+      const appsDesktopMac = $('appsDesktopMac');
+      const appsDesktopQrText = $('appsDesktopQrText');
+      const appsDesktopUrl = $('appsDesktopUrl');
+      const appsAndroidTitle = $('appsAndroidTitle');
+      const appsAndroidRustore = $('appsAndroidRustore');
+      const appsAndroidRustoreNote = $('appsAndroidRustoreNote');
+      const appsAndroidGithub = $('appsAndroidGithub');
+      const appsAndroidGithubNote = $('appsAndroidGithubNote');
+      const appsAppleTitle = $('appsAppleTitle');
+      const appsAppleIos = $('appsAppleIos');
+      const appsAppleMac = $('appsAppleMac');
+      const appsBrowserTitle = $('appsBrowserTitle');
+      const appsBrowserChrome = $('appsBrowserChrome');
+      const appsBrowserSafari = $('appsBrowserSafari');
+      const appsBrowserEdge = $('appsBrowserEdge');
+      const appsTabletTitle = $('appsTabletTitle');
+      const appsTabletText = $('appsTabletText');
+      const appsDevicesNoteTitle = $('appsDevicesNoteTitle');
+      const appsDevicesNoteText = $('appsDevicesNoteText');
+      const btnAppsDesktopShare = $('btnAppsDesktopShare');
+      const btnAppsRustore = $('btnAppsRustore');
+      const btnAppsApk = $('btnAppsApk');
+
+      if (appsTitle) appsTitle.textContent = ru ? 'Приложения GetLifeUndo' : 'GetLifeUndo apps';
+      if (appsSub)
+        appsSub.textContent = ru
+          ? 'Десктопный клиент, Android‑приложение и другие клиенты Mesh.'
+          : 'Desktop app, Android client and other Mesh clients.';
+      if (appsDesktopTitle) appsDesktopTitle.textContent = 'Desktop';
+      if (appsDesktopWin)
+        appsDesktopWin.textContent = ru
+          ? 'Windows — Mesh 0.6.1.1 (эта сборка)'
+          : 'Windows — Mesh 0.6.1.1 (this build)';
+      if (appsDesktopMac)
+        appsDesktopMac.textContent = ru ? 'macOS — в разработке' : 'macOS — in development';
+      if (appsDesktopQrText)
+        appsDesktopQrText.textContent = ru
+          ? 'Сканируйте QR, чтобы открыть страницу загрузок GetLifeUndo.'
+          : 'Scan the QR to open the GetLifeUndo downloads page.';
+      if (appsDesktopUrl)
+        appsDesktopUrl.textContent = 'https://getlifeundo.com/ru/downloads';
+      if (btnAppsDesktopShare)
+        btnAppsDesktopShare.textContent = ru ? 'Поделиться ссылкой' : 'Share link';
+
+      if (appsAndroidTitle) appsAndroidTitle.textContent = 'Android';
+      if (appsAndroidRustore) appsAndroidRustore.textContent = 'RuStore';
+      if (appsAndroidRustoreNote)
+        appsAndroidRustoreNote.textContent = ru ? 'Доступно в RuStore.' : 'Available in RuStore.';
+      if (appsAndroidGithub) appsAndroidGithub.textContent = 'GitHub';
+      if (appsAndroidGithubNote)
+        appsAndroidGithubNote.textContent = ru
+          ? 'APK (ручная установка) и dev‑сборки.'
+          : 'APK (manual install) and dev builds.';
+      if (btnAppsRustore)
+        btnAppsRustore.textContent = ru ? 'Открыть RuStore' : 'Open RuStore';
+      if (btnAppsApk)
+        btnAppsApk.textContent = ru ? 'Открыть GitHub' : 'Open GitHub';
+
+      if (appsAppleTitle) appsAppleTitle.textContent = 'Apple';
+      if (appsAppleIos)
+        appsAppleIos.textContent = ru ? 'iOS — в разработке' : 'iOS — in development';
+      if (appsAppleMac)
+        appsAppleMac.textContent = ru ? 'macOS‑клиент — в разработке' : 'macOS client — in development';
+
+      if (appsBrowserTitle)
+        appsBrowserTitle.textContent = ru ? 'Браузерные расширения' : 'Browser extensions';
+      if (appsBrowserChrome)
+        appsBrowserChrome.textContent = ru ? 'Chrome — в разработке' : 'Chrome — in development';
+      if (appsBrowserSafari)
+        appsBrowserSafari.textContent = ru ? 'Safari — в разработке' : 'Safari — in development';
+      if (appsBrowserEdge)
+        appsBrowserEdge.textContent = ru ? 'Edge — в разработке' : 'Edge — in development';
+
+      if (appsTabletTitle) appsTabletTitle.textContent = 'Tablet / iPad';
+      if (appsTabletText)
+        appsTabletText.textContent = ru
+          ? 'Планшетные клиенты — в разработке.'
+          : 'Tablet clients — in development.';
+
+      if (appsDevicesNoteTitle)
+        appsDevicesNoteTitle.textContent = ru ? 'Ваши устройства' : 'Your devices';
+      if (appsDevicesNoteText)
+        appsDevicesNoteText.textContent = ru
+          ? 'Этот desktop‑клиент уже готов. Раздел «Ваши устройства» в настройках показывает текущий ПК и позволит позже привязывать другие устройства.'
+          : 'The desktop client is ready. The "Your devices" section in Settings shows this PC and will later let you link other devices.';
+    }
+
+    // TEAM
+    const stPanelTeam = $('stPanelTeam');
+    if (stPanelTeam) {
+      const teamTitle = $('teamTitle');
+      const teamSub2 = $('teamSub');
+      const teamIntroTitle = $('teamIntroTitle');
+      const teamIntroTextMain = $('teamIntroTextMain');
+      const teamIntroTextPilot = $('teamIntroTextPilot');
+      const teamHowTitle = $('teamHowTitle');
+      const teamHowText = $('teamHowText');
+      const teamAdminTitle = $('teamAdminTitle');
+      const teamAdminText = $('teamAdminText');
+      const btnTeamAdmin = $('btnTeamAdmin');
+
+      if (teamTitle) teamTitle.textContent = 'TEAM';
+      if (teamSub2)
+        teamSub2.textContent = ru
+          ? 'TEAM 5 для команд и организаций, слоты устройств и админ‑панель.'
+          : 'TEAM 5 for teams and organisations, device slots and admin console.';
+
+      if (teamIntroTitle) teamIntroTitle.textContent = 'TEAM / TEAM 5';
+      if (teamIntroTextMain)
+        teamIntroTextMain.textContent = ru
+          ? 'TEAM — это доступ к GetLifeUndo для команды или небольшой организации. Тариф TEAM 5 рассчитан на 5 устройств (людей или рабочих станций) и даёт бонус +5% к каждому пополнению счёта команды.'
+          : 'TEAM is access to GetLifeUndo for a team or small organisation. The TEAM 5 plan is designed for 5 devices (people or workstations) and gives a +5% bonus on every team top‑up.';
+      if (teamIntroTextPilot)
+        teamIntroTextPilot.textContent = ru
+          ? 'Для пилотных команд действует индивидуальное предложение и дополнительные бонусы за обратную связь.'
+          : 'Pilot teams can get individual terms and extra bonuses for feedback.';
+
+      if (teamHowTitle) teamHowTitle.textContent = ru ? 'Как подключиться' : 'How to join';
+      if (teamHowText)
+        teamHowText.textContent = ru
+          ? 'Напишите на support@getlifeundo.com с темой TEAM, укажите название команды/организации, примерное количество людей и нужный период. Мы создадим TEAM‑аккаунт, пришлём договор и активационные ключи.'
+          : 'Email support@getlifeundo.com with subject TEAM, include your team/organisation name, approximate number of people and desired period. We will create a TEAM account, send you an agreement and activation keys.';
+
+      if (teamAdminTitle)
+        teamAdminTitle.textContent = ru ? 'TEAM / админ‑панель' : 'TEAM / admin panel';
+      if (teamAdminText)
+        teamAdminText.textContent = ru
+          ? 'В десктопной версии есть раздел «Ваши устройства» и коды привязки (PIN). Через него можно связать до 5 устройств в рамках TEAM 5.'
+          : 'In the desktop app the "Your devices" section and pairing PIN codes. It lets you link up to 5 devices within TEAM 5.';
+      if (btnTeamAdmin)
+        btnTeamAdmin.textContent = ru ? 'Открыть админ‑панель' : 'Open admin console';
+    }
+
+    // Activity / Лента
+    const stPanelActivity = $('stPanelActivity');
+    if (stPanelActivity) {
+      const tlTitle = $('tlTitle');
+      const tlSub = $('tlSub');
+      const tlTabsTitle = $('tlTabsTitle');
+      const tlTabsHint = $('tlTabsHint');
+      const tlTabsEmpty = $('tlTabsEmpty');
+      const tlTabsList = $('tlTabsList');
+      const tlShotsTitle = $('tlShotsTitle');
+      const tlShotsText1 = $('tlShotsText1');
+      const tlShotsText2 = $('tlShotsText2');
+      const tlTextTitle = $('tlTextTitle');
+      const tlTextText1 = $('tlTextText1');
+      const tlTextText2 = $('tlTextText2');
+
+      if (tlTitle) tlTitle.textContent = ru ? 'Лента' : 'Timeline';
+      if (tlSub)
+        tlSub.textContent = ru
+          ? 'Быстрый доступ к вкладкам, скриншотам и тексту. В браузерной версии здесь отображаются недавние вкладки этого браузера.'
+          : 'Quick access to tabs, screenshots and text. In the browser this section shows recent tabs from this browser.';
+
+      if (tlTabsTitle) tlTabsTitle.textContent = ru ? 'Вкладки' : 'Tabs';
+      if (tlTabsHint)
+        tlTabsHint.textContent = ru
+          ? 'Недавние вкладки этого браузера. Нажмите на строку, чтобы открыть вкладку снова.'
+          : 'Recent tabs from this browser. Click a row to reopen the tab.';
+      if (tlTabsEmpty)
+        tlTabsEmpty.textContent = ru
+          ? 'Пока нет недавних закрытых вкладок.'
+          : 'There are no recently closed tabs yet.';
+
+      if (tlShotsTitle) tlShotsTitle.textContent = ru ? 'Скриншоты' : 'Screenshots';
+      if (tlShotsText1)
+        tlShotsText1.textContent = ru
+          ? 'Десктопное приложение отслеживает папки скриншотов (Изображения/Скриншоты, OneDrive, Dropbox и др.) и показывает последние кадры в удобном списке.'
+          : 'The desktop app watches screenshot folders (Pictures/Screenshots, OneDrive, Dropbox, etc.) and shows the latest shots in a compact list.';
+      if (tlShotsText2)
+        tlShotsText2.textContent = ru
+          ? 'В браузерном расширении мы не читаем файловую систему: здесь только описание поведения, без отображения содержимого.'
+          : 'The browser extension does not read your file system; this section only describes the behaviour without showing actual files.';
+
+      if (tlTextTitle) tlTextTitle.textContent = ru ? 'Текст' : 'Text';
+      if (tlTextText1)
+        tlTextText1.textContent = ru
+          ? 'В десктопе Лента хранит историю текста из буфера обмена и позволяет быстро вернуться к нужным фрагментам.'
+          : 'In the desktop app the Timeline keeps a history of clipboard text and lets you quickly jump back to important snippets.';
+      if (tlTextText2)
+        tlTextText2.textContent = ru
+          ? 'В браузере текстовые действия ограничены вкладками и формами, поэтому здесь Лента выступает как справочный раздел.'
+          : 'In the browser text actions are limited to tabs and forms, so here the Timeline acts as a reference section.';
+    }
+
+    function refreshTimelineTabs() {
+      chrome.sessions.getRecentlyClosed({}, (sessions) => {
+        const tlTabsList = $('tlTabsList');
+        if (tlTabsList) {
+          tlTabsList.innerHTML = '';
+          sessions.forEach((session) => {
+            const tab = document.createElement('div');
+            tab.textContent = session.tab.title;
+            tab.addEventListener('click', () => {
+              chrome.sessions.restore(session.window.id, () => {
+                chrome.tabs.update(session.tab.id, { active: true });
+              });
+            });
+            tlTabsList.appendChild(tab);
+          });
+        }
+      });
+      const devSub = $('devSub');
+      const devThisDeviceTitle = $('devThisDeviceTitle');
+      const devThisDeviceText = $('devThisDeviceText');
+      const devHowLinkTitle = $('devHowLinkTitle');
+      const devHowLinkText1 = $('devHowLinkText1');
+      const devHowLinkText2 = $('devHowLinkText2');
+
+      if (devTitle) devTitle.textContent = ru ? 'Ваши устройства' : 'Your devices';
+      if (devSub)
+        devSub.textContent = ru
+          ? 'Обзор устройств TEAM и базовая информация об этом браузере. Полная связка устройств управляется через десктопный клиент и админ‑панель.'
+          : 'TEAM devices overview and basic info about this browser. Full device linking is managed via the desktop app and admin console.';
+
+      if (devThisDeviceTitle) devThisDeviceTitle.textContent = ru ? 'Это устройство' : 'This device';
+      if (devThisDeviceText)
+        devThisDeviceText.textContent = ru
+          ? 'Расширение браузера GetLifeUndo. Тип клиента: browser‑extension. Для полноценной работы TEAM и слотов устройств подключите хотя бы один десктопный клиент.'
+          : 'GetLifeUndo browser extension. Client type: browser‑extension. For full TEAM and device slot support connect at least one desktop client.';
+
+      if (devHowLinkTitle)
+        devHowLinkTitle.textContent = ru ? 'Как связать устройства' : 'How to link devices';
+      if (devHowLinkText1)
+        devHowLinkText1.textContent = ru
+          ? 'В десктопной версии есть раздел «Ваши устройства» и коды привязки (PIN). Через него можно связать до 5 устройств в рамках TEAM 5.'
+          : 'The desktop app has a "Your devices" section and pairing PIN codes. It lets you link up to 5 devices within TEAM 5.';
+      if (devHowLinkText2)
+        devHowLinkText2.textContent = ru
+          ? 'Браузерное расширение будет отображаться как ещё одно устройство, если вы отправите письмо на legal@getlifeundo.com с этого же email, что и в десктопе, и активируете TEAM.'
+          : 'The browser extension will appear as another device if you email legal@getlifeundo.com from the same address as in the desktop app and activate TEAM.';
+    }
+
+    // About
+    const stPanelAbout2 = $('stPanelAbout');
+    if (stPanelAbout2) {
+      const aboutTitle = $('aboutTitle');
+      const aboutSub2 = $('aboutSub');
+      const aboutSocialTitle = $('aboutSocialTitle');
+      const aboutSocialList = $('aboutSocialList');
+      const aboutStoresTitle = $('aboutStoresTitle');
+      const aboutStoresList = $('aboutStoresList');
+      const aboutActionsTitle = $('aboutActionsTitle');
+      const aboutActionsText = $('aboutActionsText');
+      const btnAboutShare = $('btnAboutShare');
+      const btnAboutRate = $('btnAboutRate');
+
+      if (aboutTitle) aboutTitle.textContent = ru ? 'О LifeUndo' : 'About LifeUndo';
+      if (aboutSub2)
+        aboutSub2.textContent = ru
+          ? 'Социальные сети, ссылки на магазины и полезные действия вокруг GetLifeUndo.'
+          : 'Social networks, store links and useful actions around GetLifeUndo.';
+
+      if (aboutSocialTitle)
+        aboutSocialTitle.textContent = ru ? 'Соцсети и каналы' : 'Social media and channels';
+      if (aboutSocialList)
+        aboutSocialList.textContent = ru
+          ? 'Telegram, VK, X, YouTube, Reddit — подробные новости и разборы обновлений.'
+          : 'Telegram, VK, X, YouTube, Reddit — detailed updates and release breakdowns.';
+
+      if (aboutStoresTitle)
+        aboutStoresTitle.textContent = ru ? 'Магазины и расширения' : 'Stores and extensions';
+      if (aboutStoresList)
+        aboutStoresList.textContent = ru
+          ? 'RuStore, Firefox Add-ons, GitHub и другие площадки, где появляются клиенты LifeUndo.'
+          : 'RuStore, Firefox Add-ons, GitHub and other platforms where LifeUndo clients appear.';
+
+      if (aboutActionsTitle)
+        aboutActionsTitle.textContent = ru ? 'Поделиться и оценить' : 'Share and rate';
+      if (aboutActionsText)
+        aboutActionsText.textContent = ru
+          ? 'Поделитесь ссылкой на getlifeundo.com и при желании оцените приложение в магазине.'
+          : 'Share a link to getlifeundo.com and rate the app in a store if you wish.';
+
+      if (btnAboutShare)
+        btnAboutShare.textContent = ru ? 'Поделиться' : 'Share';
+      if (btnAboutRate)
+        btnAboutRate.textContent = ru ? 'Оценить' : 'Rate';
+    }
+
+    const faqSub = $('faqSub');
+    const faqMainTitle = $('faqMainTitle');
+    const faqWhatIsTitle = $('faqWhatIsTitle');
+    const faqWhatIsText = $('faqWhatIsText');
+    const faqHowWorksTitle = $('faqHowWorksTitle');
+    const faqHowWorksText = $('faqHowWorksText');
+    const faqWhereStoreTitle = $('faqWhereStoreTitle');
+    const faqWhereStoreText = $('faqWhereStoreText');
+    const faqNeedSetupTitle = $('faqNeedSetupTitle');
+    const faqNeedSetupText = $('faqNeedSetupText');
+    const faqCancelSubTitle = $('faqCancelSubTitle');
+    const faqCancelSubText = $('faqCancelSubText');
+
+    if (faqTitle) faqTitle.textContent = 'FAQ';
+    if (faqSub)
+      faqSub.textContent = ru
+        ? 'Короткие ответы про GetLifeUndo, хранение данных и подписку.'
+        : 'Short answers about GetLifeUndo, data storage and subscription.';
+
+    if (faqMainTitle) faqMainTitle.textContent = ru ? 'Частые вопросы' : 'Frequently asked questions';
+
+    if (faqWhatIsTitle)
+      faqWhatIsTitle.textContent = ru ? 'Что такое GetLifeUndo?' : 'What is GetLifeUndo?';
+    if (faqWhatIsText)
+      faqWhatIsText.textContent = ru
+        ? 'Это локальный таймлайн вашей деятельности: скриншоты и текст из буфера. Помогает вернуться к тому, что вы делали 5 минут/час/день назад.'
+        : 'It is a local activity timeline: screenshots and clipboard text. It helps you jump back to what you did minutes/hours/days ago.';
+
+    if (faqHowWorksTitle)
+      faqHowWorksTitle.textContent = ru ? 'Как это работает?' : 'How does it work?';
+    if (faqHowWorksText)
+      faqHowWorksText.textContent = ru
+        ? 'Десктопное приложение отслеживает системные папки скриншотов и сохраняет текст из буфера обмена. Всё остаётся на вашем диске.'
+        : 'The desktop app watches system screenshot folders and stores clipboard text. Everything stays on your disk.';
+
+    if (faqWhereStoreTitle)
+      faqWhereStoreTitle.textContent = ru ? 'Где хранятся данные?' : 'Where is data stored?';
+    if (faqWhereStoreText)
+      faqWhereStoreText.textContent = ru
+        ? 'Локально, в каталоге данных приложения. Папку можно открыть через настройки десктопной версии.'
+        : 'Locally, in the app data directory. You can open the folder from the desktop Settings.';
+
+    if (faqNeedSetupTitle)
+      faqNeedSetupTitle.textContent = ru ? 'Нужно ли что‑то настраивать?' : 'Do I need to configure anything?';
+    if (faqNeedSetupText)
+      faqNeedSetupText.textContent = ru
+        ? 'По умолчанию всё работает сразу. Дополнительно вы можете добавить свои папки для наблюдения и выбрать место хранения.'
+        : 'Defaults work out of the box. You may add custom watch folders and choose a storage location.';
+
+    if (faqCancelSubTitle)
+      faqCancelSubTitle.textContent = ru ? 'Что если отменить подписку?' : 'What if I cancel the subscription?';
+    if (faqCancelSubText)
+      faqCancelSubText.textContent = ru
+        ? 'Локальный доступ к вашим данным сохранится. Премиум‑функции и будущие облачные возможности станут недоступны, но история останется на вашем устройстве.'
+        : 'Local access to your data remains. Premium and future cloud features will be disabled, but history stays on your device.';
+  }
+}
+
+// Обновляет блок "Вкладки" в Ленте на основе недавно закрытых вкладок браузера
+function refreshTimelineTabs() {
+  const listEl = $('tlTabsList');
+  const emptyEl = $('tlTabsEmpty');
+  if (!listEl) return;
+
+  listEl.innerHTML = '';
+
+  try {
+    const s = api && api.sessions;
+    if (!s || typeof s.getRecentlyClosed !== 'function') {
+      if (emptyEl) emptyEl.style.display = 'block';
+      return;
+    }
+
+    s.getRecentlyClosed({ maxResults: 20 }, (items) => {
+      const sessions = Array.isArray(items) ? items : [];
+
+      if (!sessions.length) {
+        if (emptyEl) emptyEl.style.display = 'block';
+        return;
+      }
+
+      if (emptyEl) emptyEl.style.display = 'none';
+
+      sessions.forEach((session) => {
+        const t = session.tab;
+        if (!t || !t.url) return;
+
+        const li = document.createElement('li');
+        li.style.cursor = 'pointer';
+        li.style.display = 'flex';
+        li.style.flexDirection = 'column';
+
+        const title = document.createElement('span');
+        title.textContent = t.title || t.url;
+        li.appendChild(title);
+
+        const urlLine = document.createElement('span');
+        urlLine.textContent = t.url;
+        urlLine.style.fontSize = '11px';
+        urlLine.style.color = '#9ca3af';
+        li.appendChild(urlLine);
+
+        li.addEventListener('click', () => {
+          try {
+            if (session.sessionId) {
+              api.sessions.restore(session.sessionId, () => {});
+            } else if (t.sessionId) {
+              api.sessions.restore(t.sessionId, () => {});
+            }
+          } catch (e) {}
+        });
+
+        listEl.appendChild(li);
+      });
+    });
+  } catch (e) {
+    if (emptyEl) emptyEl.style.display = 'block';
+  }
+}
+
+function bindLang() {
+  const btnRu = $('ppLangRu');
+  const btnEn = $('ppLangEn');
+
+  if (btnRu) {
+    btnRu.addEventListener('click', () => {
+      currentLang = 'ru';
+      try {
+        localStorage.setItem('lu_lang', 'ru');
+      } catch (e) {}
+      applyLang();
+    });
+  }
+
+  if (btnEn) {
+    btnEn.addEventListener('click', () => {
+      currentLang = 'en';
+      try {
+        localStorage.setItem('lu_lang', 'en');
+      } catch (e) {}
+      applyLang();
+    });
+  }
+}
+
+function openUrl(url) {
+  try {
+    api.tabs.create({ url });
+  } catch (e) {
+    window.open(url, '_blank');
+  }
+}
+
+function bindSettingsTabs() {
+  const overlay = $('settingsOverlay');
+  const btnGear = document.getElementById('btnGear');
+  const btnBack = $('stBack');
+  const titleEl = $('stTitle');
+  const buttons = Array.from(document.querySelectorAll('.settings-tab-btn'));
+  const sections = Array.from(document.querySelectorAll('.settings-section'));
+
+  if (btnGear && overlay) {
+    btnGear.addEventListener('click', () => {
+      overlay.classList.add('open');
+      document.body.classList.add('settings-open');
+      // при открытии панели заголовок — просто "Настройки/Settings"
+      if (titleEl) titleEl.textContent = currentLang === 'ru' ? 'Настройки' : 'Settings';
+    });
+  }
+
+  if (btnBack && overlay) {
+    btnBack.addEventListener('click', () => {
+      overlay.classList.remove('open');
+      document.body.classList.remove('settings-open');
+      buttons.forEach((b) => b.classList.remove('active'));
+      sections.forEach((s) => s.classList.remove('active'));
+      if (titleEl) titleEl.textContent = currentLang === 'ru' ? 'Настройки' : 'Settings';
+    });
+  }
+
+  buttons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const tab = btn.getAttribute('data-tab');
+
+      buttons.forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      sections.forEach((s) => s.classList.remove('active'));
+      if (tab) {
+        const panelId = 'stPanel' + tab.charAt(0).toUpperCase() + tab.slice(1);
+        const panel = $(panelId);
+        if (panel) panel.classList.add('active');
+
+        if (tab === 'activity') {
+          refreshTimelineTabs();
+        }
+      }
+
+      if (titleEl) {
+        const txt = btn.textContent && btn.textContent.trim();
+        titleEl.textContent = txt || (currentLang === 'ru' ? 'Настройки' : 'Settings');
+      }
+    });
+  });
+}
+
+function bindFooter() {
+  const map = {
+    ftSite: 'https://getlifeundo.com',
+    ftGitHub: 'https://github.com/LifeUndo',
+    ftPrivacy: 'https://getlifeundo.com/ru/privacy',
+    ftOffer: 'https://getlifeundo.com/ru/offer'
+  };
+
+  Object.keys(map).forEach((id) => {
+    const el = $(id);
+    if (!el) return;
+    el.addEventListener('click', () => openUrl(map[id]));
+  });
+}
+
+function initVersionAndTrial() {
+  try {
+    const manifest = api && api.runtime && api.runtime.getManifest ? api.runtime.getManifest() : null;
+    const v = manifest && manifest.version ? manifest.version : '';
+    const verEl = $('ppVersion');
+    if (verEl) verEl.textContent = v ? `v${v}` : 'v0.0.0';
+  } catch (e) {}
+
+  // trialState может быть заполнен позже из storage; сейчас просто отрисуем капсулу
+  renderTrialCapsule();
+}
+
+function bindGeneralSettings() {
+  const langSelect = $('stGenLang');
+  const emailInput = $('stGenEmail');
+  const emailBtn = $('stGenEmailSave');
+  const btnShowHere = $('stGenShowHere');
+  const btnShots = $('stGenShots');
+  const btnVideo = $('stGenVideo');
+  const btnEvent = $('stGenEvent');
+
+  // инициализация языка и email из chrome.storage.local
+  try {
+    api.storage.local.get({ lu_settings_ext: {}, lu_accountEmail: '' }, (res) => {
+      const st = res.lu_settings_ext || {};
+
+      if (st.lang === 'en' || st.lang === 'ru') {
+        currentLang = st.lang;
+      }
+      if (langSelect) {
+        langSelect.value = currentLang;
+        langSelect.addEventListener('change', () => {
+          currentLang = langSelect.value === 'en' ? 'en' : 'ru';
+          api.storage.local.set({
+            lu_settings_ext: { ...st, lang: currentLang }
+          });
+          try {
+            localStorage.setItem('lu_lang', currentLang);
+          } catch (e) {}
+          applyLang();
+        });
+      }
+
+      if (emailInput && typeof res.lu_accountEmail === 'string') {
+        emailInput.value = res.lu_accountEmail;
+      }
+
+      // инициализация тогглов
+      const showHere = !!st.showListHere;
+      const shots = st.shotsEnabled !== false;
+      const video = !!st.videoEnabled;
+      const eventMode = !!st.eventMode;
+
+      function applyToggle(btn, on) {
+        if (!btn) return;
+        btn.textContent = on ? 'ON' : 'OFF';
+        btn.classList.toggle('on', on);
+      }
+
+      applyToggle(btnShowHere, showHere);
+      applyToggle(btnShots, shots);
+      applyToggle(btnVideo, video);
+      applyToggle(btnEvent, eventMode);
+    });
+  } catch (e) {}
+
+  function toggleSetting(key, btn) {
+    if (!btn) return;
+    btn.addEventListener('click', () => {
+      try {
+        api.storage.local.get({ lu_settings_ext: {} }, (res) => {
+          const st = res.lu_settings_ext || {};
+          const cur = !!st[key];
+          const next = !cur;
+          const ns = { ...st, [key]: next };
+          // shotsEnabled по умолчанию true, поэтому при выключении пишем false
+          if (key === 'shotsEnabled' && next === true) {
+            ns[key] = true;
+          }
+          api.storage.local.set({ lu_settings_ext: ns });
+
+          btn.textContent = next ? 'ON' : 'OFF';
+          btn.classList.toggle('on', next);
+        });
+      } catch (e) {}
+    });
+  }
+
+  toggleSetting('showListHere', btnShowHere);
+  toggleSetting('shotsEnabled', btnShots);
+  toggleSetting('videoEnabled', btnVideo);
+  toggleSetting('eventMode', btnEvent);
+
+  if (emailBtn) {
+    emailBtn.addEventListener('click', () => {
+      const email = (emailInput && emailInput.value.trim()) || '';
+      if (!email) {
+        alert(currentLang === 'ru' ? 'Введите email.' : 'Please enter email.');
+        return;
+      }
+
+      try {
+        api.storage.local.set({ lu_accountEmail: email });
+      } catch (e) {}
+
+      // Упрощённый mailto, как в десктопе, но только с базовой информацией
+      let subject;
+      if (currentLang === 'ru') {
+        subject = 'LifeUndo — email для важных обновлений';
+      } else {
+        subject = 'LifeUndo — email for important updates';
+      }
+
+      let version = '';
+      try {
+        const m = api && api.runtime && api.runtime.getManifest ? api.runtime.getManifest() : null;
+        version = m && m.version ? m.version : '';
+      } catch (e) {}
+
+      const bodyLines = [
+        `Email: ${email}`,
+        'Client: browser-extension',
+        version ? `Version: ${version}` : ''
+      ].filter(Boolean);
+
+      const mailto =
+        'mailto:legal@getlifeundo.com?subject=' +
+        encodeURIComponent(subject) +
+        '&body=' +
+        encodeURIComponent(bodyLines.join('\n'));
+
+      window.open(mailto, '_blank');
+
+      alert(
+        currentLang === 'ru'
+          ? 'Email сохранён локально. Мы используем его в десктопной версии и письме.'
+          : 'Email saved locally. It will be used by desktop client and email.'
+      );
+    });
+  }
+}
+
+function bindSubscriptionActions() {
+  const btnPortal = $('btnSubPortal');
+  const btnStatus = $('btnSubStatus');
+  const btnPro = $('btnSubPro');
+  const btnVip = $('btnSubVip');
+  const btnTeam = $('btnSubTeam');
+
+  if (btnPortal) {
+    btnPortal.addEventListener('click', () => {
+      openUrl('https://getlifeundo.com/account');
+    });
+  }
+
+  if (btnStatus) {
+    btnStatus.addEventListener('click', () => {
+      alert(
+        currentLang === 'ru'
+          ? 'Статус подписки будет обновляться через backend позже.'
+          : 'Subscription status refresh will be wired to backend later.'
+      );
+    });
+  }
+
+  const goPlan = (plan) => {
+    // В десктопе тут fkCreate; в расширении просто открываем страницу оплаты
+    const base = 'https://getlifeundo.com/account';
+    const url = `${base}?plan=${encodeURIComponent(plan)}`;
+    openUrl(url);
+  };
+
+  if (btnPro) {
+    btnPro.addEventListener('click', () => goPlan('pro_month'));
+  }
+  if (btnVip) {
+    btnVip.addEventListener('click', () => goPlan('vip_lifetime'));
+  }
+  if (btnTeam) {
+    btnTeam.addEventListener('click', () => goPlan('team_5'));
+  }
+}
+
+function bindAppsAboutTeam() {
+  // Apps — QR/ссылки
+  const btnDesktopShare = $('btnAppsDesktopShare');
+  if (btnDesktopShare) {
+    btnDesktopShare.addEventListener('click', () => {
+      const url = 'https://getlifeundo.com/ru/downloads';
+      try {
+        navigator.clipboard.writeText(url).then(
+          () => {
+            alert(
+              currentLang === 'ru'
+                ? 'Ссылка на загрузки скопирована в буфер обмена.'
+                : 'Downloads link copied to clipboard.'
+            );
+          },
+          () => {
+            try {
+              api.tabs.create({ url });
+            } catch (e) {
+              window.open(url, '_blank');
+            }
+          }
+        );
+      } catch (e) {
+        try {
+          api.tabs.create({ url });
+        } catch (e2) {
+          window.open(url, '_blank');
+        }
+      }
+    });
+  }
+
+  const btnRustore = $('btnAppsRustore');
+  if (btnRustore) {
+    btnRustore.addEventListener('click', () => {
+      const url = 'https://www.rustore.ru/catalog/app/com.getlifeundo.lifeundo_app';
+      try {
+        api.tabs.create({ url });
+      } catch (e) {
+        window.open(url, '_blank');
+      }
+    });
+  }
+
+  const btnApk = $('btnAppsApk');
+  if (btnApk) {
+    btnApk.addEventListener('click', () => {
+      const url = 'https://github.com/LifeUndo';
+      try {
+        api.tabs.create({ url });
+      } catch (e) {
+        window.open(url, '_blank');
+      }
+    });
+  }
+
+  // TEAM admin
+  const btnTeamAdmin = $('btnTeamAdmin');
+  if (btnTeamAdmin) {
+    btnTeamAdmin.addEventListener('click', () => {
+      const url = 'https://getlifeundo.com/admin';
+      try {
+        api.tabs.create({ url });
+      } catch (e) {
+        window.open(url, '_blank');
+      }
+    });
+  }
+
+  // About — соцсети / магазины / действия
+  const openUrl = (id, url) => {
+    const btn = $(id);
+    if (!btn) return;
+    btn.addEventListener('click', () => {
+      try {
+        api.tabs.create({ url });
+      } catch (e) {
+        window.open(url, '_blank');
+      }
+    });
+  };
+
+  openUrl('btnAboutTelegram', 'https://t.me/getlifeundo');
+  openUrl('btnAboutVK', 'https://vk.ru/GetLifeUndo');
+  openUrl('btnAboutX', 'https://x.com/getlifeundo');
+  openUrl('btnAboutYouTube', 'https://youtube.com/@getlifeundo');
+  openUrl('btnAboutFirefox', 'https://addons.mozilla.org');
+  openUrl('btnAboutRuStore', 'https://www.rustore.ru/catalog/app/com.getlifeundo.lifeundo_app');
+  openUrl('btnAboutGitHub', 'https://github.com/LifeUndo');
+
+  const btnShare = $('btnAboutShare');
+  if (btnShare) {
+    btnShare.addEventListener('click', () => {
+      const url = 'https://getlifeundo.com';
+      try {
+        const n = navigator;
+        if (n && typeof n.share === 'function') {
+          n.share({ title: 'GetLifeUndo', url }).catch(() => {});
+          return;
+        }
+      } catch (e) {}
+
+      try {
+        navigator.clipboard.writeText(url).then(
+          () => {
+            alert(
+              currentLang === 'ru'
+                ? 'Ссылка на сайт скопирована в буфер обмена.'
+                : 'Website link copied to clipboard.'
+            );
+          },
+          () => {
+            try {
+              api.tabs.create({ url });
+            } catch (e) {
+              window.open(url, '_blank');
+            }
+          }
+        );
+      } catch (e) {
+        try {
+          api.tabs.create({ url });
+        } catch (e2) {
+          window.open(url, '_blank');
+        }
+      }
+    });
+  }
+
+  const btnRate = $('btnAboutRate');
+  if (btnRate) {
+    btnRate.addEventListener('click', () => {
+      const url = 'https://www.rustore.ru/catalog/app/com.getlifeundo.lifeundo_app';
+      try {
+        api.tabs.create({ url });
+      } catch (e) {
+        window.open(url, '_blank');
+      }
+    });
+  }
+}
+
+(function init() {
+  // ...
+
+  bindLang();
+  bindSettingsTabs();
+  bindFooter();
+  initVersionAndTrial();
+  bindGeneralSettings();
+  bindSubscriptionActions();
+  bindAppsAboutTeam();
+
+  applyLang();
+})();

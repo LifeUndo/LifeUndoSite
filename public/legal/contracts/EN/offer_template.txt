@@ -1,0 +1,29 @@
+PUBLIC OFFER — NON-EXCLUSIVE LICENSE FOR "GETLIFEUNDO"
+
+Licensor: {{COMPANY_LEGAL_FORM}} "{{COMPANY_NAME}}", reg. {{COMPANY_OGRN}}, address: {{COMPANY_ADDRESS}}.
+
+1. SCOPE
+Licensor grants a non-exclusive, non-transferable license to use the Software "GetLifeUndo".
+
+2. USE & RESTRICTIONS
+Worldwide, for the paid term. No reverse-engineering, sublicensing or redistribution.
+
+3. FEES & PAYMENT
+As listed on {{COMPANY_SITE}}/en/pricing. Payment via PSP; payment constitutes acceptance.
+
+4. UPDATES & SUPPORT
+Updates may be delivered automatically. Support: {{COMPANY_EMAIL}} (≤ 2 business days).
+
+5. PRIVACY
+The Software works locally; no telemetry, and timeline content or browsing history are not uploaded to the server. On the {{COMPANY_SITE}} backend we process account e-mail, device identifiers and license / 7-day trial status, as well as minimal payment data required by the payment provider. See Data Processing Policy (including centralized trial and licensing rules): {{COMPANY_SITE}}/en/legal/pdp.
+
+6. LIABILITY
+Limited to the amount of 3 months of the applicable plan.
+
+7. TERMINATION
+Upon expiration of the paid term or breach.
+
+8. LAW & VENUE
+Governing law: {{JURISDICTION}}; disputes — courts at Licensor's location.
+
+Updated: {{DATE_UPDATED}}

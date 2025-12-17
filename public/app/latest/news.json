@@ -1,0 +1,33 @@
+﻿[
+  {
+    "version": "0.4.3.5",
+    "platform": "Extensions/Desktop",
+    "publishedAt": "2025-11-10T20:46:01Z",
+    "items": [
+      "Fully revamped subscriptions and checkout.",
+      "Reliable background checkout with window fallback.",
+      "Reuse existing checkout tab, debounce clicks.",
+      "Fixed popup 'api is not defined'.",
+      "Safer DOM operations."
+    ],
+    "links": {
+      "firefox": "https://addons.mozilla.org/ru/firefox/addon/lifeundo/",
+      "github": "https://github.com/LifeUndo/LifeUndo/releases/tag/v0.4.3.5"
+    }
+  },
+  {
+    "version": "1.0.0+10 (rev5a)",
+    "platform": "Android",
+    "publishedAt": "2025-11-05T00:00:00Z",
+    "items": [
+      "Android APK release (rev5a).",
+      "Tabs capture: brand icons (incl. DuckDuckGo), list 8+2.",
+      "Removed Open/Install and 'Special' section; updated descriptions.",
+      "EN localization and hints."
+    ],
+    "links": {
+      "apk": "https://github.com/LifeUndo/LifeUndo/releases/tag/v1.0.0-10-rev5a",
+      "rustore": "https://www.rustore.ru/catalog/app/com.getlifeundo.lifeundo_app"
+    }
+  }
+]

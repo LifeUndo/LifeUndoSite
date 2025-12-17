@@ -1,0 +1,8 @@
+﻿{
+  "version": "0.6.1.1",
+  "publishedAt": "2025-11-25T00:00:00Z",
+  "files": {
+    "firefox": "https://addons.mozilla.org/ru/firefox/addon/lifeundo/",
+    "win": "https://getlifeundo.com/app/releases/windows/desktop-0.6.1.1-ui-gold3-x64.nsis.7z"
+  }
+}

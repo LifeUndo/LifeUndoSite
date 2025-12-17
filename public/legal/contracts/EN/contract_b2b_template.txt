@@ -1,0 +1,50 @@
+SOFTWARE LICENSE AGREEMENT (B2B, 100+ VIP ORGANIZATIONS)
+
+Date: _______________
+
+{{COMPANY_LEGAL_FORM}} "{{COMPANY_NAME}}" ("Licensor"), represented by {{DIRECTOR_TITLE}} {{DIRECTOR_NAME}}, acting under Charter, and ______________________, Tax ID __________, Reg. No. __________, address: ____________________, ("Licensee"), collectively "Parties", have entered into this Agreement as follows:
+
+1. SUBJECT MATTER
+1.1. Licensor grants Licensee a non-exclusive license to use the Software "GetLifeUndo" under the terms of this Agreement.
+
+2. SCOPE OF RIGHTS
+2.1. Number of seats (user devices): _____.
+2.2. Territory: worldwide. Term: ________.
+2.3. Reverse engineering, distribution, transfer of rights to third parties is prohibited.
+
+3. COMPENSATION AND PAYMENT TERMS
+3.1. License fee: _________ rubles per month/year (including/excluding VAT — specify).
+3.2. Payment by invoice within ___ banking days from invoice date.
+3.3. Service provision/license grant is confirmed by Service Certificate. In absence of motivated objections within 5 (five) business days, Certificate is deemed signed.
+
+4. UPDATES AND SUPPORT
+4.1. Technical support at {{COMPANY_EMAIL}}, response time — up to 2 business days.
+4.2. Updates provided within the paid period.
+
+5. CONFIDENTIALITY AND DATA
+5.1. Software operates locally, no telemetry.
+5.2. Personal data of parties processed according to Privacy Policy and DPA (if needed), available at {{COMPANY_SITE}}.
+
+6. LIABILITY AND LIMITATION
+6.1. Licensor's liability limited to 3-month compensation under Agreement.
+6.2. Neither party liable for indirect damages.
+
+7. FORCE MAJEURE
+7.1. Party affected by force majeure notifies other party within 3 business days.
+
+8. TERM AND TERMINATION
+8.1. Agreement effective from signing date until "__" _______ 20__, with automatic renewal for same period unless objected.
+8.2. Termination — by mutual agreement or unilaterally upon breach with written notice.
+
+9. DETAILS AND SIGNATURES
+
+Licensor: {{COMPANY_LEGAL_FORM}} "{{COMPANY_NAME}}"
+Tax ID {{COMPANY_INN}}, Reg. {{COMPANY_OGRN}}, {{COMPANY_ADDRESS}}
+Bank: {{BANK_NAME}}, BIC {{BANK_BIK}}, Account {{BANK_ACCOUNT}}, Corr. {{BANK_CORR}}
+{{DIRECTOR_TITLE}} ___________/ {{DIRECTOR_NAME}} / Seal
+
+Licensee: ____________________________
+Tax ID __________, Reg. __________, Address __________________
+Manager ___________/ __________ / Seal
+
+Updated: {{DATE_UPDATED}}
