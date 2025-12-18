@@ -1,16 +1,22 @@
 'use client';
 
-import { useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 export default function AccountDeletePage() {
-  const searchParams = useSearchParams();
-  const langParam = searchParams.get('lang');
-  const lang = langParam === 'en' ? 'en' : 'ru';
-  const isRu = lang === 'ru';
-
+  const [isRu, setIsRu] = useState(true);
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [message, setMessage] = useState('');
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const langParam = params.get('lang');
+      setIsRu(langParam !== 'en');
+    } catch {
+      setIsRu(true);
+    }
+  }, []);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
