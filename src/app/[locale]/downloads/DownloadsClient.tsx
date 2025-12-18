@@ -6,12 +6,40 @@ import { useTranslations } from '@/hooks/useTranslations';
 interface LatestData {
   version: string;
   publishedAt: string;
-  files: {
+  desktop?: {
+    win?: string;
+    mac?: string;
+  };
+  mobile?: {
+    ios?: string;
+    macos?: string;
+    android?: string;
+  };
+  extensions?: {
+    chrome?: string;
+    firefox?: string;
+    edge?: string;
+  };
+  // Старый формат для совместимости с 0.3.7.x
+  files?: {
     firefox?: string;
     firefox_xpi?: string;
     win?: string;
     mac?: string;
   };
+}
+
+interface WhatsNewData {
+  version: string;
+  items: string[];
+}
+
+interface NewsItem {
+  version: string;
+  platform: string;
+  publishedAt: string;
+  items: string[];
+  links?: Record<string, string>;
 }
 
 interface DownloadCardProps {
@@ -57,19 +85,6 @@ function DownloadCard({ icon, title, description, href, className, isAvailable =
       </a>
     </div>
   );
-}
-
-interface WhatsNewData {
-  version: string;
-  items: string[];
-}
-
-interface NewsItem {
-  version: string;
-  platform: string;
-  publishedAt: string;
-  items: string[];
-  links?: Record<string, string>;
 }
 
 export default function DownloadsClient() {
@@ -121,7 +136,7 @@ export default function DownloadsClient() {
       loadNews(),
     ])
       .then(([latest, whatsNew, news]) => {
-        setLatestData(latest);
+        setLatestData(latest as LatestData);
         setWhatsNewData(whatsNew);
         setNewsList(news);
         setLoading(false);
@@ -147,6 +162,31 @@ export default function DownloadsClient() {
         setLoading(false);
       });
   }, [locale]);
+
+  const firefoxUrl = latestData?.extensions?.firefox
+    || latestData?.files?.firefox
+    || "https://addons.mozilla.org/firefox/addon/getlifeundo/";
+
+  const firefoxXpiUrl = latestData?.files?.firefox_xpi;
+
+  const chromeUrl = latestData?.extensions?.chrome
+    || "https://chrome.google.com/webstore/detail/getlifeundo/PLACEHOLDER_CHROME_ID";
+
+  const edgeUrl = latestData?.extensions?.edge
+    || "https://microsoftedge.microsoft.com/addons/detail/getlifeundo/PLACEHOLDER_EDGE_ID";
+
+  const winDesktopUrl = latestData?.desktop?.win
+    || latestData?.files?.win
+    || "#";
+
+  const macDesktopUrl = latestData?.desktop?.mac
+    || latestData?.files?.mac
+    || "#";
+
+  const iosUrl = latestData?.mobile?.ios || "#";
+  const macosStoreUrl = latestData?.mobile?.macos || "#";
+  const androidStoreUrl = latestData?.mobile?.android
+    || "https://github.com/LifeUndo/LifeUndo/releases/tag/v1.0.0-10-rev5a";
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900">
@@ -237,10 +277,10 @@ export default function DownloadsClient() {
             }
             title="Chrome"
             description={t.downloads.chrome}
-            href="https://chrome.google.com/webstore/detail/getlifeundo/PLACEHOLDER_CHROME_ID"
+            href={chromeUrl}
             className="bg-blue-600 hover:bg-blue-700 text-white"
             t={t}
-            isAvailable={false}
+            isAvailable={!!latestData?.extensions?.chrome}
           />
 
           {/* Firefox */}
@@ -253,15 +293,15 @@ export default function DownloadsClient() {
               }
               title="Firefox"
               description={t.downloads.firefox}
-              href={latestData?.files.firefox || "https://addons.mozilla.org/firefox/addon/getlifeundo/"}
+              href={firefoxUrl}
               className="bg-orange-600 hover:bg-orange-700 text-white"
               t={t}
-              isAvailable={true}
+              isAvailable={!!firefoxUrl}
             />
-            {latestData?.files.firefox_xpi && (
+            {firefoxXpiUrl && (
               <div className="mt-2 text-xs text-gray-400 text-center">
                 <a
-                  href={latestData.files.firefox_xpi}
+                  href={firefoxXpiUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="underline hover:text-gray-300"
@@ -281,9 +321,9 @@ export default function DownloadsClient() {
             }
             title="Edge"
             description={t.downloads.edge}
-            href="https://microsoftedge.microsoft.com/addons/detail/getlifeundo/PLACEHOLDER_EDGE_ID"
+            href={edgeUrl}
             className="bg-blue-500 hover:bg-blue-600 text-white"
-            isAvailable={false}
+            isAvailable={!!latestData?.extensions?.edge}
             t={t}
           />
 
@@ -296,9 +336,9 @@ export default function DownloadsClient() {
             }
             title="Windows"
             description={t.downloads.windows}
-            href={latestData?.files.win || "#"}
+            href={winDesktopUrl}
             className="bg-gray-600 hover:bg-gray-700 text-white"
-            isAvailable={true}
+            isAvailable={!!(latestData?.desktop?.win || latestData?.files?.win)}
             t={t}
           />
 
@@ -311,9 +351,9 @@ export default function DownloadsClient() {
             }
             title="macOS"
             description={t.downloads.macos}
-            href={latestData?.files.mac || "#"}
+            href={macDesktopUrl}
             className="bg-gray-700 hover:bg-gray-800 text-white"
-            isAvailable={false}
+            isAvailable={!!(latestData?.desktop?.mac || latestData?.files?.mac)}
             t={t}
           />
 
@@ -326,9 +366,9 @@ export default function DownloadsClient() {
             }
             title="App Store (iOS)"
             description={locale === 'en' ? 'iOS app' : 'Приложение для iOS'}
-            href="#"
+            href={iosUrl}
             className="bg-black hover:bg-black text-white"
-            isAvailable={false}
+            isAvailable={!!latestData?.mobile?.ios}
             t={t}
           />
 
@@ -341,9 +381,9 @@ export default function DownloadsClient() {
             }
             title="Android (APK)"
             description={t.downloads.android}
-            href="https://github.com/LifeUndo/LifeUndo/releases/tag/v1.0.0-10-rev5a"
+            href={androidStoreUrl}
             className="bg-green-600 hover:bg-green-700 text-white"
-            isAvailable={true}
+            isAvailable={!!latestData?.mobile?.android}
             t={t}
           />
 

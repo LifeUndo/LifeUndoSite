@@ -162,3 +162,13 @@ export const admin_events = pgTable('admin_events', {
   meta: jsonb('meta'),
   created_at: timestamp('created_at').notNull().defaultNow(),
 });
+
+// Account deletion requests log
+export const account_deletions = pgTable('account_deletions', {
+  id: serial('id').primaryKey(),
+  email: varchar('email', { length: 255 }).notNull(),
+  reason_code: varchar('reason_code', { length: 50 }),
+  comment: text('comment'),
+  source: varchar('source', { length: 50 }).notNull().default('web'), // web / ios / macos / support
+  created_at: timestamp('created_at').notNull().defaultNow(),
+});
