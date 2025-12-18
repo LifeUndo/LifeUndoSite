@@ -63,12 +63,14 @@ export default function AccountDeletePage() {
         return;
       }
 
+      const backendMessage = typeof json.message === 'string' ? (json.message as string) : undefined;
+
       setStatus('success');
       setMessage(
-        (json.message as string) ||
-          (isRu
-            ? 'Запрос на удаление аккаунта отправлен. Мы обработаем его и удалим/анонимизируем данные согласно политике хранения. Подтверждение будет отправлено на ваш email (если включена отправка писем).'
-            : 'Your account deletion request has been submitted. We will process it and delete/anonymize your server-side data according to our data retention policy. A confirmation email will be sent to you (if email sending is enabled).'),
+        isRu
+          ? backendMessage ||
+              'Запрос на удаление аккаунта отправлен. Мы обработаем его и удалим/анонимизируем данные согласно политике хранения. Подтверждение будет отправлено на ваш email (если включена отправка писем).'
+          : 'Your account deletion request has been submitted. We will process it and delete/anonymize your server-side data according to our data retention policy. A confirmation email will be sent to you (if email sending is enabled).',
       );
     } catch (error) {
       console.error('[account.delete] submit error', error);
